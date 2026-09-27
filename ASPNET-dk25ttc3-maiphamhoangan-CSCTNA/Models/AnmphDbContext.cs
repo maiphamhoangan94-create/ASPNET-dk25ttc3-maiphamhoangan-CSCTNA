@@ -15,6 +15,8 @@ public partial class AnmphDbContext : DbContext
     {
     }
 
+    public virtual DbSet<User> Users { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         OnModelCreatingPartial(modelBuilder);
