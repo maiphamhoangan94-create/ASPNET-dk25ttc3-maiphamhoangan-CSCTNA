@@ -1,1 +1,3 @@
 - Khỏi tạo mã nguồn
+- Kết nối cơ sở dữ liệu
+- Khởi tạo đăng ký
