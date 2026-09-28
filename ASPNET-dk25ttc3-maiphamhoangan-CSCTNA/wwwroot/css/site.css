@@ -1,31 +1,117 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+:root {
+    --bg-warm: #FBF7F2;
+    --terracotta: #C85A3B;
+    --terracotta-hover: #B04A2D;
+    --terracotta-light: #FDF0EC;
+    --dark-footer: #221D1B;
 }
 
 body {
-  margin-bottom: 60px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #333333;
+    background-color: #FFFFFF;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+.font-serif {
+    font-family: 'Playfair Display', serif;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+.bg-warm {
+    background-color: var(--bg-warm) !important;
+}
+
+.bg-terracotta {
+    background-color: var(--terracotta) !important;
+}
+
+.bg-terracotta-light {
+    background-color: var(--terracotta-light) !important;
+}
+
+.bg-dark-footer {
+    background-color: #221D1B !important;
+}
+
+.footer-text {
+    color: #D1C7BD !important;
+    line-height: 1.6;
+}
+
+.footer-link {
+    color: #BBB2A8;
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+}
+
+    .footer-link:hover {
+        color: #E07A5F;
+    }
+
+.social-icons a {
+    color: #D1C7BD;
+    font-size: 1.1rem;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+    .social-icons a:hover {
+        color: #E07A5F;
+        transform: translateY(-2px);
+    }
+
+.text-terracotta {
+    color: var(--terracotta) !important;
+}
+
+.tracking-wider {
+    letter-spacing: 1px;
+}
+
+.extra-small {
+    font-size: 0.75rem;
+}
+
+.btn-terracotta {
+    background-color: var(--terracotta);
+    color: #FFFFFF;
+    border: none;
+    transition: all 0.2s ease-in-out;
+}
+
+    .btn-terracotta:hover {
+        background-color: var(--terracotta-hover);
+        color: #FFFFFF;
+    }
+
+.card-taste {
+    height: 180px;
+    transition: transform 0.3s ease;
+}
+
+    .card-taste:hover {
+        transform: translateY(-5px);
+    }
+
+.bg-dark-gradient {
+    background: linear-gradient(0deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+}
+
+.card-recipe {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .card-recipe:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+    }
+
+.recipe-img {
+    height: 160px;
+    object-fit: cover;
+}
+
+@media (min-width: 992px) {
+    .col-lg-2-4 {
+        flex: 0 0 auto;
+        width: 20%;
+    }
 }
