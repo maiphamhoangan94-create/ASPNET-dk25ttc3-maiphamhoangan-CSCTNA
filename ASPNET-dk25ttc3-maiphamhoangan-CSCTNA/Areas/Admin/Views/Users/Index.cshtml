@@ -1,0 +1,42 @@
+@model IEnumerable<ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.User>
+
+@{
+    ViewData["Title"] = "Quan ly nguoi dung";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Nguoi dung</h2>
+    <a asp-action="Create" class="btn btn-primary">Them user</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Ten dang nhap</th>
+                <th>Email</th>
+                <th>Ho ten</th>
+                <th>Vai tro</th>
+                <th>Ngay tao</th>
+                <th class="text-end">Thao tac</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Username</td>
+                <td>@item.Email</td>
+                <td>@item.FullName</td>
+                <td>@item.Role</td>
+                <td>@item.CreatedAt?.ToString("dd/MM/yyyy HH:mm")</td>
+                <td class="text-end">
+                    <a asp-action="Details" asp-route-id="@item.UserId">Chi tiet</a> |
+                    <a asp-action="Edit" asp-route-id="@item.UserId">Sua</a> |
+                    <a asp-action="Delete" asp-route-id="@item.UserId">Xoa</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

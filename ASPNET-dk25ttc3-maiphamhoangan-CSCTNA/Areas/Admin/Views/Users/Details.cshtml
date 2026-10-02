@@ -1,0 +1,28 @@
+@model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.User
+
+@{
+    ViewData["Title"] = "Chi tiet nguoi dung";
+}
+
+<h2>Chi tiet nguoi dung</h2>
+<hr />
+
+<dl class="row">
+    <dt class="col-sm-3">Ten dang nhap</dt>
+    <dd class="col-sm-9">@Model.Username</dd>
+
+    <dt class="col-sm-3">Email</dt>
+    <dd class="col-sm-9">@Model.Email</dd>
+
+    <dt class="col-sm-3">Ho ten</dt>
+    <dd class="col-sm-9">@Model.FullName</dd>
+
+    <dt class="col-sm-3">Vai tro</dt>
+    <dd class="col-sm-9">@Model.Role</dd>
+
+    <dt class="col-sm-3">Ngay tao</dt>
+    <dd class="col-sm-9">@Model.CreatedAt?.ToString("dd/MM/yyyy HH:mm")</dd>
+</dl>
+
+<a asp-action="Edit" asp-route-id="@Model.UserId" class="btn btn-primary">Sua</a>
+<a asp-action="Index" class="btn btn-outline-secondary">Quay lai</a>

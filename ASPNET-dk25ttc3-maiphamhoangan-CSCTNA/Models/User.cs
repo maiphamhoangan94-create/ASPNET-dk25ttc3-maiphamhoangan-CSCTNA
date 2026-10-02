@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models
 {
+    [Table("Users")]
     public class User
     {
         [Key]
@@ -12,5 +14,6 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models
         public string Password { get; set; }
         public string FullName { get; set; }
         public DateTime? CreatedAt { get; set; }
+        public string Role { get; set; }
     }
 }

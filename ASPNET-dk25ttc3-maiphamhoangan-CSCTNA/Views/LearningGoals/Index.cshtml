@@ -1,0 +1,87 @@
+@model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.CourseGoalSummary
+
+@{
+    ViewData["Title"] = "Mục tiêu học phần ASP.NET";
+}
+
+<section class="py-5 bg-white">
+    <div class="container py-4">
+        <div class="row g-4 align-items-start">
+            <div class="col-lg-5">
+                <span class="text-uppercase tracking-wider text-muted small fw-semibold">ASP.NET - C# - SQL Server</span>
+                <h1 class="font-serif fw-bold text-dark mt-2 mb-3">Minh chứng mục tiêu học phần</h1>
+                <p class="text-secondary">
+                    Trang này tổng hợp các phần kỹ thuật chính của website: ASP.NET MVC, C#, controls, ADO.NET, SQL Server, XML và web service.
+                </p>
+                <div class="d-flex flex-wrap gap-2">
+                    <a class="btn btn-terracotta rounded-pill px-4" href="/api/categories" target="_blank">Xem JSON API</a>
+                    <a class="btn btn-outline-dark rounded-pill px-4" asp-action="CategoriesXml" target="_blank">Xem XML</a>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="border rounded-4 p-4 h-100 bg-warm">
+                            <div class="text-muted small">Users</div>
+                            <div class="display-6 fw-bold text-terracotta">@Model.UserCount</div>
+                            <div class="small text-secondary">Đọc bằng ADO.NET</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="border rounded-4 p-4 h-100 bg-warm">
+                            <div class="text-muted small">Categories</div>
+                            <div class="display-6 fw-bold text-terracotta">@Model.CategoryCount</div>
+                            <div class="small text-secondary">Lưu trong SQL Server</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="border rounded-4 p-4 h-100 bg-warm">
+                            <div class="text-muted small">Posts</div>
+                            <div class="display-6 fw-bold text-terracotta">@Model.PostCount</div>
+                            <div class="small text-secondary">Quản lý bằng CRUD</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive mt-5">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Mục tiêu</th>
+                        <th>Phần website đáp ứng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Hiểu về ASP.NET và C#</td>
+                        <td>Ứng dụng ASP.NET Core MVC, controller, model, Razor view và code C#.</td>
+                    </tr>
+                    <tr>
+                        <td>Controls cơ bản trong ASP.NET</td>
+                        <td>Form đăng ký, đăng nhập, tạo/sửa/xóa danh mục và bài viết trong khu Admin.</td>
+                    </tr>
+                    <tr>
+                        <td>ADO.NET</td>
+                        <td>Service ADO.NET dùng SqlConnection và SqlCommand để đọc thống kê từ SQL Server.</td>
+                    </tr>
+                    <tr>
+                        <td>SQL Server</td>
+                        <td>Dữ liệu Users, Categories, Posts lưu bằng SQL Server LocalDB.</td>
+                    </tr>
+                    <tr>
+                        <td>XML</td>
+                        <td>Endpoint xuất danh mục dạng XML: <a asp-action="CategoriesXml" target="_blank">/LearningGoals/CategoriesXml</a>.</td>
+                    </tr>
+                    <tr>
+                        <td>Web service</td>
+                        <td>API trả JSON: <a href="/api/categories" target="_blank">/api/categories</a>.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p class="text-muted small mt-3 mb-0">Cập nhật lúc @Model.GeneratedAt.ToString("dd/MM/yyyy HH:mm:ss")</p>
+    </div>
+</section>
