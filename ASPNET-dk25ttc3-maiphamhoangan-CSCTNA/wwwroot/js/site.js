@@ -71,8 +71,9 @@
     window.addEventListener('scroll', revealOnScroll);
     revealOnScroll();
 
-    const newsletterBtn = document.querySelector('section form button');
-    const newsletterInput = document.querySelector('section form input');
+    const newsletterForm = document.querySelector('[data-newsletter-form]');
+    const newsletterBtn = newsletterForm?.querySelector('button');
+    const newsletterInput = newsletterForm?.querySelector('input[type="email"]');
 
     if (newsletterBtn && newsletterInput) {
         newsletterBtn.addEventListener('click', function (e) {

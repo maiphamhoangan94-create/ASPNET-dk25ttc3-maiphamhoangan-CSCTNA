@@ -1,42 +1,49 @@
 @model IEnumerable<ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.User>
 
 @{
-    ViewData["Title"] = "Quan ly nguoi dung";
+    ViewData["Title"] = "Quản lý người dùng";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="mb-0">Nguoi dung</h2>
-    <a asp-action="Create" class="btn btn-primary">Them user</a>
-</div>
+<section class="admin-card">
+    <div class="admin-card-header">
+        <div>
+            <h2 class="admin-card-title">Danh sách người dùng</h2>
+            <p class="admin-card-subtitle">Quản lý tài khoản và vai trò truy cập.</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary">Thêm người dùng</a>
+    </div>
 
-<div class="table-responsive">
-    <table class="table table-striped align-middle">
-        <thead>
-            <tr>
-                <th>Ten dang nhap</th>
-                <th>Email</th>
-                <th>Ho ten</th>
-                <th>Vai tro</th>
-                <th>Ngay tao</th>
-                <th class="text-end">Thao tac</th>
-            </tr>
-        </thead>
-        <tbody>
-        @foreach (var nguoiDung in Model)
-        {
-            <tr>
-                <td>@nguoiDung.Username</td>
-                <td>@nguoiDung.Email</td>
-                <td>@nguoiDung.FullName</td>
-                <td>@nguoiDung.Role</td>
-                <td>@nguoiDung.CreatedAt?.ToString("dd/MM/yyyy HH:mm")</td>
-                <td class="text-end">
-                    <a asp-action="Details" asp-route-id="@nguoiDung.UserId">Chi tiet</a> |
-                    <a asp-action="Edit" asp-route-id="@nguoiDung.UserId">Sua</a> |
-                    <a asp-action="Delete" asp-route-id="@nguoiDung.UserId">Xoa</a>
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
-</div>
+    <div class="admin-table-wrap">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Tên đăng nhập</th>
+                    <th>Email</th>
+                    <th>Họ tên</th>
+                    <th>Vai trò</th>
+                    <th>Ngày tạo</th>
+                    <th class="text-end">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var nguoiDung in Model)
+            {
+                <tr>
+                    <td class="fw-semibold">@nguoiDung.Username</td>
+                    <td>@nguoiDung.Email</td>
+                    <td>@nguoiDung.FullName</td>
+                    <td><span class="badge text-bg-light">@nguoiDung.Role</span></td>
+                    <td>@nguoiDung.CreatedAt?.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>
+                        <div class="admin-actions">
+                            <a asp-action="Details" asp-route-id="@nguoiDung.UserId" class="btn btn-sm btn-outline-secondary">Chi tiết</a>
+                            <a asp-action="Edit" asp-route-id="@nguoiDung.UserId" class="btn btn-sm btn-primary">Sửa</a>
+                            <a asp-action="Delete" asp-route-id="@nguoiDung.UserId" class="btn btn-sm btn-danger">Xóa</a>
+                        </div>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</section>

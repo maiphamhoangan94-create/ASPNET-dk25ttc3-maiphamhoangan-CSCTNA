@@ -1,14 +1,32 @@
 using ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly AnmphDbContext _context;
+
+        public HomeController(AnmphDbContext context)
         {
-            return View();
+            _context = context;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var approvedPosts = await _context.Posts
+                .Include(post => post.Category)
+                .Include(post => post.User)
+                .Include(post => post.PostProvinces)
+                    .ThenInclude(postProvince => postProvince.Province)
+                .Where(post => post.Status == 1)
+                .OrderByDescending(post => post.CreatedAt)
+                .Take(8)
+                .ToListAsync();
+
+            return View(approvedPosts);
         }
 
         public IActionResult Privacy()

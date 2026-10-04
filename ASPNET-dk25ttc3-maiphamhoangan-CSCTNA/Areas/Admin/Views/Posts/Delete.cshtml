@@ -1,130 +1,40 @@
 @model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.Post
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Xóa bài viết";
+    var trangThai = Model.Status == 1 ? "Đã duyệt" : Model.Status == 2 ? "Từ chối" : "Chờ duyệt";
 }
 
-<h1>Delete</h1>
+<section class="admin-card admin-form">
+    <div class="admin-card-header">
+        <div>
+            <h2 class="admin-card-title">Xóa bài viết</h2>
+            <p class="admin-card-subtitle">Bài viết bị xóa sẽ không còn hiển thị trong hệ thống.</p>
+        </div>
+    </div>
+    <div class="admin-card-body">
+        <div class="alert alert-danger">
+            Bạn có chắc muốn xóa bài viết <strong>@Model.Title</strong>?
+        </div>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.Post</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.Title)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.Content)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.Content)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.ImageUrl)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.ImageUrl)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.Status)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.RejectionReason)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.RejectionReason)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.CategoryId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.CategoryId)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.Category)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.Category)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.UserId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.UserId)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.User)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.User)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.ApprovedBy)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.ApprovedBy)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.AdminApprover)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.AdminApprover)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.ApprovedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.ApprovedAt)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.CreatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.CreatedAt)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.UpdatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.UpdatedAt)
-        </dd>
-    </dl>
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
-</div>
+        <dl class="row admin-detail-list">
+            <dt class="col-sm-4">Tiêu đề</dt>
+            <dd class="col-sm-8">@Model.Title</dd>
+
+            <dt class="col-sm-4">Trạng thái</dt>
+            <dd class="col-sm-8">@trangThai</dd>
+
+            <dt class="col-sm-4">Mã danh mục</dt>
+            <dd class="col-sm-8">@Model.CategoryId</dd>
+
+            <dt class="col-sm-4">Mã tác giả</dt>
+            <dd class="col-sm-8">@Model.UserId</dd>
+        </dl>
+
+        <form asp-action="Delete" class="d-flex gap-2">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn btn-danger">Xóa bài viết</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Quay lại</a>
+        </form>
+    </div>
+</section>

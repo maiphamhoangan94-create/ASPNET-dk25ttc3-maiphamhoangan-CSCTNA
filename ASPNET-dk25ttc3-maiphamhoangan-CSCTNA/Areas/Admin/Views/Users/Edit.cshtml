@@ -1,21 +1,24 @@
 @model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.User
 
 @{
-    ViewData["Title"] = "Sua nguoi dung";
+    ViewData["Title"] = "Sửa người dùng";
 }
 
-<h2>Sua nguoi dung</h2>
-<hr />
-
-<div class="row">
-    <div class="col-md-6">
+<section class="admin-card admin-form">
+    <div class="admin-card-header">
+        <div>
+            <h2 class="admin-card-title">Sửa người dùng</h2>
+            <p class="admin-card-subtitle">Cập nhật thông tin tài khoản và vai trò.</p>
+        </div>
+    </div>
+    <div class="admin-card-body">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
             <input type="hidden" asp-for="UserId" />
             <input type="hidden" asp-for="CreatedAt" />
 
             <div class="mb-3">
-                <label asp-for="Username" class="form-label">Ten dang nhap</label>
+                <label asp-for="Username" class="form-label">Tên đăng nhập</label>
                 <input asp-for="Username" class="form-control" />
                 <span asp-validation-for="Username" class="text-danger"></span>
             </div>
@@ -27,32 +30,34 @@
             </div>
 
             <div class="mb-3">
-                <label asp-for="Password" class="form-label">Mat khau moi</label>
+                <label asp-for="Password" class="form-label">Mật khẩu mới</label>
                 <input asp-for="Password" class="form-control" type="password" />
-                <div class="form-text">De trong neu khong muon doi mat khau.</div>
+                <div class="form-text">Để trống nếu không muốn đổi mật khẩu.</div>
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="FullName" class="form-label">Ho ten</label>
+                <label asp-for="FullName" class="form-label">Họ tên</label>
                 <input asp-for="FullName" class="form-control" />
                 <span asp-validation-for="FullName" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="Role" class="form-label">Vai tro</label>
+                <label asp-for="Role" class="form-label">Vai trò</label>
                 <select asp-for="Role" class="form-select">
-                    <option value="User">User</option>
-                    <option value="Admin">Admin</option>
+                    <option value="User">Người dùng</option>
+                    <option value="Admin">Quản trị viên</option>
                 </select>
                 <span asp-validation-for="Role" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn btn-primary">Luu</button>
-            <a asp-action="Index" class="btn btn-outline-secondary">Quay lai</a>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Quay lại</a>
+            </div>
         </form>
     </div>
-</div>
+</section>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

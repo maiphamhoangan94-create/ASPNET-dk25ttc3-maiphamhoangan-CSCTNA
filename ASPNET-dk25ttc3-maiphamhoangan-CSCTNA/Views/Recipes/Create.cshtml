@@ -1,0 +1,71 @@
+@model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.Post
+
+@{
+    ViewData["Title"] = "Đăng công thức";
+}
+
+<section class="py-5 bg-white">
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-9 col-xl-8">
+                <div class="mb-4">
+                    <span class="text-uppercase tracking-wider text-muted small fw-semibold">GÓP BẾP CÙNG CỘNG ĐỒNG</span>
+                    <h1 class="h2 fw-bold text-dark mt-2 mb-2">Đăng công thức nấu ăn của bạn</h1>
+                    <p class="text-secondary mb-0">Chia sẻ món ngon gia đình. Công thức sau khi gửi sẽ ở trạng thái chờ duyệt trước khi hiển thị công khai.</p>
+                </div>
+
+                @if (TempData["RecipeCreatedMessage"] != null)
+                {
+                    <div class="alert alert-success rounded-3" role="alert">
+                        @TempData["RecipeCreatedMessage"]
+                    </div>
+                }
+
+                <form asp-action="Create" method="post" class="recipe-submit-form bg-warm rounded-4 p-4 p-md-5">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label fw-semibold">Tên công thức</label>
+                        <input asp-for="Title" class="form-control form-control-lg" placeholder="Ví dụ: Cá kho tộ tiêu xanh" />
+                        <span asp-validation-for="Title" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="CategoryId" class="form-label fw-semibold">Danh mục món ăn</label>
+                        <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-select form-select-lg">
+                            <option value="">Chọn danh mục</option>
+                        </select>
+                        <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ImageUrl" class="form-label fw-semibold">Đường dẫn ảnh món ăn</label>
+                        <input asp-for="ImageUrl" class="form-control" placeholder="https://..." />
+                        <span asp-validation-for="ImageUrl" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="SelectedProvinceIds" class="form-label fw-semibold">Tỉnh thành áp dụng</label>
+                        <select asp-for="SelectedProvinceIds" asp-items="ViewBag.Provinces" class="form-select" multiple size="8"></select>
+                        <span asp-validation-for="SelectedProvinceIds" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Content" class="form-label fw-semibold">Nội dung công thức</label>
+                        <textarea asp-for="Content" class="form-control" rows="10" placeholder="Nguyên liệu, cách sơ chế, các bước nấu và mẹo nhỏ của bạn..."></textarea>
+                        <span asp-validation-for="Content" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                        <button type="submit" class="btn btn-terracotta rounded-pill px-4 py-2">Gửi công thức</button>
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4 py-2">Về trang chủ</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Quan tri Bep Nha</title>
+    <title>@ViewData["Title"] - Quản trị Bếp Nhà</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
 </head>
@@ -13,23 +13,20 @@
             <a class="admin-brand" asp-area="Admin" asp-controller="Categories" asp-action="Index">
                 <span class="admin-brand-mark">BN</span>
                 <span>
-                    <strong>Bep Nha</strong>
-                    <small>Admin</small>
+                    <strong>Bếp Nhà</strong>
+                    <small>Quản trị</small>
                 </span>
             </a>
 
             <nav class="admin-nav">
                 <a class="admin-nav-link" asp-area="Admin" asp-controller="Categories" asp-action="Index">
-                    <span>Danh muc</span>
+                    <span>Danh mục</span>
                 </a>
                 <a class="admin-nav-link" asp-area="Admin" asp-controller="Posts" asp-action="Index">
-                    <span>Bai viet</span>
+                    <span>Bài viết</span>
                 </a>
                 <a class="admin-nav-link" asp-area="Admin" asp-controller="Users" asp-action="Index">
-                    <span>Nguoi dung</span>
-                </a>
-                <a class="admin-nav-link" asp-area="" asp-controller="Home" asp-action="Index">
-                    <span>Ve trang chu</span>
+                    <span>Người dùng</span>
                 </a>
             </nav>
         </aside>
@@ -37,8 +34,8 @@
         <div class="admin-main">
             <header class="admin-topbar">
                 <div>
-                    <p class="admin-eyebrow">Khu vuc quan tri</p>
-                    <h1>@(ViewData["Title"] ?? "Dashboard")</h1>
+                    <p class="admin-eyebrow">Khu vực quản trị</p>
+                    <h1>@(ViewData["Title"] ?? "Tổng quan")</h1>
                 </div>
                 <a class="btn btn-outline-secondary btn-sm" asp-area="" asp-controller="Home" asp-action="Index">Xem website</a>
             </header>

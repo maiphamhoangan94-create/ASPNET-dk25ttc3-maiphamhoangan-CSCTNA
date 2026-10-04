@@ -1,42 +1,46 @@
 @model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.Category
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Thêm danh mục";
 }
 
-<h1>Create</h1>
-
-<h4>Category</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+<section class="admin-card admin-form">
+    <div class="admin-card-header">
+        <div>
+            <h2 class="admin-card-title">Thêm danh mục</h2>
+            <p class="admin-card-subtitle">Tạo danh mục mới cho bài viết.</p>
+        </div>
+    </div>
+    <div class="admin-card-body">
         <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label">Tên danh mục</label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
-                <label asp-for="Slug" class="control-label"></label>
+            <div class="mb-3">
+                <label asp-for="Slug" class="form-label">Đường dẫn</label>
                 <input asp-for="Slug" class="form-control" />
                 <span asp-validation-for="Slug" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
-                <label asp-for="Posts" class="control-label"></label>
-                <input asp-for="Posts" class="form-control" />
-                <span asp-validation-for="Posts" class="text-danger"></span>
+            <div class="mb-3">
+                <label asp-for="ImageUrl" class="form-label">Ảnh danh mục</label>
+                <input asp-for="ImageUrl" class="form-control" placeholder="https://..." />
+                <span asp-validation-for="ImageUrl" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Lưu danh mục</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Quay lại</a>
             </div>
         </form>
     </div>
-</div>
+</section>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

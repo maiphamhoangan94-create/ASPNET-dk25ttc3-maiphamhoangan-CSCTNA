@@ -1,47 +1,54 @@
 @model IEnumerable<ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.Category>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Quản lý danh mục";
 }
 
-<h1>Index</h1>
+<section class="admin-card">
+    <div class="admin-card-header">
+        <div>
+            <h2 class="admin-card-title">Danh sách danh mục</h2>
+            <p class="admin-card-subtitle">Quản lý nhóm nội dung hiển thị trên website.</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary">Thêm danh mục</a>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(danhMuc => danhMuc.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(danhMuc => danhMuc.Slug)
-            </th>
-            <th>
-                @Html.DisplayNameFor(danhMuc => danhMuc.Posts)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var danhMuc in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(giaTri => danhMuc.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(giaTri => danhMuc.Slug)
-            </td>
-            <td>
-                @Html.DisplayFor(giaTri => danhMuc.Posts)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@danhMuc.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@danhMuc.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@danhMuc.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="admin-table-wrap">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Tên danh mục</th>
+                    <th>Đường dẫn</th>
+                    <th class="text-end">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var danhMuc in Model)
+            {
+                <tr>
+                    <td style="width: 84px;">
+                        @if (!string.IsNullOrWhiteSpace(danhMuc.ImageUrl))
+                        {
+                            <img src="@danhMuc.ImageUrl" alt="@danhMuc.Name" class="rounded object-fit-cover" style="width: 56px; height: 42px;" />
+                        }
+                        else
+                        {
+                            <span class="text-muted small">Chưa có</span>
+                        }
+                    </td>
+                    <td class="fw-semibold">@danhMuc.Name</td>
+                    <td><span class="text-muted">@danhMuc.Slug</span></td>
+                    <td>
+                        <div class="admin-actions">
+                            <a asp-action="Details" asp-route-id="@danhMuc.Id" class="btn btn-sm btn-outline-secondary">Chi tiết</a>
+                            <a asp-action="Edit" asp-route-id="@danhMuc.Id" class="btn btn-sm btn-primary">Sửa</a>
+                            <a asp-action="Delete" asp-route-id="@danhMuc.Id" class="btn btn-sm btn-danger">Xóa</a>
+                        </div>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</section>

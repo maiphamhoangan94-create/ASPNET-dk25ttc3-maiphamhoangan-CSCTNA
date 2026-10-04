@@ -56,5 +56,11 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models
 
         [Display(Name = "Ngày cập nhật")]
         public DateTime? UpdatedAt { get; set; }
+
+        public virtual ICollection<PostProvince> PostProvinces { get; set; } = new List<PostProvince>();
+
+        [NotMapped]
+        [Display(Name = "Tỉnh thành")]
+        public List<int> SelectedProvinceIds { get; set; } = new();
     }
 }

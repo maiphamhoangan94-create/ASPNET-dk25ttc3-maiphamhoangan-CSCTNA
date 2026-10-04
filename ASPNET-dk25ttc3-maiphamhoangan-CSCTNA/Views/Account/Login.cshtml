@@ -11,6 +11,13 @@
                 <h3>ĐĂNG NHẬP</h3>
             </div>
             <div class="card-body">
+                @if (TempData["LoginMessage"] != null)
+                {
+                    <div class="alert alert-warning" role="alert">
+                        @TempData["LoginMessage"]
+                    </div>
+                }
+
                 <form asp-action="Login" method="post">
                     @Html.AntiForgeryToken()
 

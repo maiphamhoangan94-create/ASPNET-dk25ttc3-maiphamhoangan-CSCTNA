@@ -1,115 +1,90 @@
 @model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.Post
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Chi tiết bài viết";
+    var trangThai = Model.Status == 1 ? "Đã duyệt" : Model.Status == 2 ? "Từ chối" : "Chờ duyệt";
 }
 
-<h1>Details</h1>
+<section class="admin-card">
+    <div class="admin-card-header">
+        <div>
+            <h2 class="admin-card-title">Chi tiết bài viết</h2>
+            <p class="admin-card-subtitle">Thông tin nội dung và trạng thái duyệt.</p>
+        </div>
+    </div>
+    <div class="admin-card-body">
+        <dl class="row admin-detail-list">
+            <dt class="col-sm-3">Tiêu đề</dt>
+            <dd class="col-sm-9">@Model.Title</dd>
 
-<div>
-    <h4>Post</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.Title)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.Content)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.Content)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.ImageUrl)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.ImageUrl)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.Status)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.RejectionReason)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.RejectionReason)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.CategoryId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.CategoryId)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.Category)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.Category)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.UserId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.UserId)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.User)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.User)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.ApprovedBy)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.ApprovedBy)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.AdminApprover)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.AdminApprover)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.ApprovedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.ApprovedAt)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.CreatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.CreatedAt)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(baiViet => baiViet.UpdatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(baiViet => baiViet.UpdatedAt)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+            <dt class="col-sm-3">Nội dung</dt>
+            <dd class="col-sm-9">@Model.Content</dd>
+
+            <dt class="col-sm-3">Ảnh đại diện</dt>
+            <dd class="col-sm-9">@Model.ImageUrl</dd>
+
+            <dt class="col-sm-3">Trạng thái</dt>
+            <dd class="col-sm-9">
+                @{
+                    var mauTrangThai = Model.Status == 1 ? "text-bg-success" : Model.Status == 2 ? "text-bg-danger" : "text-bg-warning";
+                }
+                <span class="badge @mauTrangThai">@trangThai</span>
+            </dd>
+
+            <dt class="col-sm-3">Lý do từ chối</dt>
+            <dd class="col-sm-9">@Model.RejectionReason</dd>
+
+            <dt class="col-sm-3">Mã danh mục</dt>
+            <dd class="col-sm-9">@(Model.Category?.Name ?? Model.CategoryId.ToString())</dd>
+
+            <dt class="col-sm-3">Tỉnh thành</dt>
+            <dd class="col-sm-9">
+                @{
+                    var provinces = Model.PostProvinces
+                        .Select(postProvince => postProvince.Province?.Name)
+                        .Where(provinceName => !string.IsNullOrWhiteSpace(provinceName));
+                }
+                @(provinces.Any() ? string.Join(", ", provinces) : "Chưa chọn")
+            </dd>
+
+            <dt class="col-sm-3">Mã tác giả</dt>
+            <dd class="col-sm-9">@(Model.User?.FullName ?? Model.User?.Username ?? Model.UserId.ToString())</dd>
+
+            <dt class="col-sm-3">Mã người duyệt</dt>
+            <dd class="col-sm-9">@(Model.AdminApprover?.FullName ?? Model.AdminApprover?.Username ?? Model.ApprovedBy?.ToString())</dd>
+
+            <dt class="col-sm-3">Thời gian duyệt</dt>
+            <dd class="col-sm-9">@Model.ApprovedAt?.ToString("dd/MM/yyyy HH:mm")</dd>
+
+            <dt class="col-sm-3">Ngày tạo</dt>
+            <dd class="col-sm-9">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</dd>
+
+            <dt class="col-sm-3">Ngày cập nhật</dt>
+            <dd class="col-sm-9">@Model.UpdatedAt?.ToString("dd/MM/yyyy HH:mm")</dd>
+        </dl>
+
+        <div class="border-top pt-4 mt-4">
+            <h3 class="h5 fw-bold mb-3">Phê duyệt bài viết</h3>
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                @if (Model.Status != 1)
+                {
+                    <form asp-action="Approve" asp-route-id="@Model.Id" method="post">
+                        <button type="submit" class="btn btn-success">Duyệt bài viết</button>
+                    </form>
+                }
+                @if (Model.Status != 2)
+                {
+                    <form asp-action="Reject" asp-route-id="@Model.Id" method="post" class="d-flex flex-wrap gap-2 flex-grow-1">
+                        <input type="text" name="rejectionReason" class="form-control" placeholder="Nhập lý do từ chối..." />
+                        <button type="submit" class="btn btn-outline-danger">Từ chối</button>
+                    </form>
+                }
+            </div>
+        </div>
+
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Sửa</a>
+            <a asp-action="Index" class="btn btn-outline-secondary">Quay lại</a>
+        </div>
+    </div>
+</section>

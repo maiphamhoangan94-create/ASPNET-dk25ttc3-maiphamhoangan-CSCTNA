@@ -1,28 +1,37 @@
 @model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.User
 
 @{
-    ViewData["Title"] = "Chi tiet nguoi dung";
+    ViewData["Title"] = "Chi tiết người dùng";
 }
 
-<h2>Chi tiet nguoi dung</h2>
-<hr />
+<section class="admin-card admin-form">
+    <div class="admin-card-header">
+        <div>
+            <h2 class="admin-card-title">Chi tiết người dùng</h2>
+            <p class="admin-card-subtitle">Thông tin tài khoản trong hệ thống.</p>
+        </div>
+    </div>
+    <div class="admin-card-body">
+        <dl class="row admin-detail-list">
+            <dt class="col-sm-4">Tên đăng nhập</dt>
+            <dd class="col-sm-8">@Model.Username</dd>
 
-<dl class="row">
-    <dt class="col-sm-3">Ten dang nhap</dt>
-    <dd class="col-sm-9">@Model.Username</dd>
+            <dt class="col-sm-4">Email</dt>
+            <dd class="col-sm-8">@Model.Email</dd>
 
-    <dt class="col-sm-3">Email</dt>
-    <dd class="col-sm-9">@Model.Email</dd>
+            <dt class="col-sm-4">Họ tên</dt>
+            <dd class="col-sm-8">@Model.FullName</dd>
 
-    <dt class="col-sm-3">Ho ten</dt>
-    <dd class="col-sm-9">@Model.FullName</dd>
+            <dt class="col-sm-4">Vai trò</dt>
+            <dd class="col-sm-8">@Model.Role</dd>
 
-    <dt class="col-sm-3">Vai tro</dt>
-    <dd class="col-sm-9">@Model.Role</dd>
+            <dt class="col-sm-4">Ngày tạo</dt>
+            <dd class="col-sm-8">@Model.CreatedAt?.ToString("dd/MM/yyyy HH:mm")</dd>
+        </dl>
 
-    <dt class="col-sm-3">Ngay tao</dt>
-    <dd class="col-sm-9">@Model.CreatedAt?.ToString("dd/MM/yyyy HH:mm")</dd>
-</dl>
-
-<a asp-action="Edit" asp-route-id="@Model.UserId" class="btn btn-primary">Sua</a>
-<a asp-action="Index" class="btn btn-outline-secondary">Quay lai</a>
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.UserId" class="btn btn-primary">Sửa</a>
+            <a asp-action="Index" class="btn btn-outline-secondary">Quay lại</a>
+        </div>
+    </div>
+</section>

@@ -1,113 +1,84 @@
 @model IEnumerable<ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.Post>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Quản lý bài viết";
 }
 
-<h1>Index</h1>
+<section class="admin-card">
+    <div class="admin-card-header">
+        <div>
+            <h2 class="admin-card-title">Danh sách bài viết</h2>
+            <p class="admin-card-subtitle">Theo dõi nội dung, trạng thái duyệt và thông tin tác giả.</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary">Thêm bài viết</a>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(baiViet => baiViet.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(baiViet => baiViet.Content)
-            </th>
-            <th>
-                @Html.DisplayNameFor(baiViet => baiViet.ImageUrl)
-            </th>
-            <th>
-                @Html.DisplayNameFor(baiViet => baiViet.Status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(baiViet => baiViet.RejectionReason)
-            </th>
-            <th>
-                @Html.DisplayNameFor(baiViet => baiViet.CategoryId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(baiViet => baiViet.Category)
-            </th>
-            <th>
-                @Html.DisplayNameFor(baiViet => baiViet.UserId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(baiViet => baiViet.User)
-            </th>
-            <th>
-                @Html.DisplayNameFor(baiViet => baiViet.ApprovedBy)
-            </th>
-            <th>
-                @Html.DisplayNameFor(baiViet => baiViet.AdminApprover)
-            </th>
-            <th>
-                @Html.DisplayNameFor(baiViet => baiViet.ApprovedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(baiViet => baiViet.CreatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(baiViet => baiViet.UpdatedAt)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var baiViet in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(giaTri => baiViet.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(giaTri => baiViet.Content)
-            </td>
-            <td>
-                @Html.DisplayFor(giaTri => baiViet.ImageUrl)
-            </td>
-            <td>
-                @Html.DisplayFor(giaTri => baiViet.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(giaTri => baiViet.RejectionReason)
-            </td>
-            <td>
-                @Html.DisplayFor(giaTri => baiViet.CategoryId)
-            </td>
-            <td>
-                @Html.DisplayFor(giaTri => baiViet.Category)
-            </td>
-            <td>
-                @Html.DisplayFor(giaTri => baiViet.UserId)
-            </td>
-            <td>
-                @Html.DisplayFor(giaTri => baiViet.User)
-            </td>
-            <td>
-                @Html.DisplayFor(giaTri => baiViet.ApprovedBy)
-            </td>
-            <td>
-                @Html.DisplayFor(giaTri => baiViet.AdminApprover)
-            </td>
-            <td>
-                @Html.DisplayFor(giaTri => baiViet.ApprovedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(giaTri => baiViet.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(giaTri => baiViet.UpdatedAt)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@baiViet.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@baiViet.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@baiViet.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    @if (TempData["PostMessage"] != null)
+    {
+        <div class="alert alert-success mx-3 mt-3 mb-0" role="alert">
+            @TempData["PostMessage"]
+        </div>
+    }
+
+    <div class="admin-table-wrap">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Tiêu đề</th>
+                    <th>Trạng thái</th>
+                    <th>Danh mục</th>
+                    <th>Tỉnh thành</th>
+                    <th>Tác giả</th>
+                    <th>Ngày tạo</th>
+                    <th class="text-end">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var baiViet in Model)
+            {
+                var trangThai = baiViet.Status == 1 ? "Đã duyệt" : baiViet.Status == 2 ? "Từ chối" : "Chờ duyệt";
+                var mauTrangThai = baiViet.Status == 1 ? "text-bg-success" : baiViet.Status == 2 ? "text-bg-danger" : "text-bg-warning";
+
+                <tr>
+                    <td>
+                        <div class="fw-semibold">@baiViet.Title</div>
+                        <div class="text-muted small text-truncate-2">@baiViet.Content</div>
+                    </td>
+                    <td><span class="badge @mauTrangThai">@trangThai</span></td>
+                    <td>@(baiViet.Category?.Name ?? baiViet.CategoryId.ToString())</td>
+                    <td>
+                        @{
+                            var provinces = baiViet.PostProvinces
+                                .Select(postProvince => postProvince.Province?.Name)
+                                .Where(provinceName => !string.IsNullOrWhiteSpace(provinceName));
+                        }
+                        @(provinces.Any() ? string.Join(", ", provinces) : "Chưa chọn")
+                    </td>
+                    <td>@(baiViet.User?.FullName ?? baiViet.User?.Username ?? baiViet.UserId.ToString())</td>
+                    <td>@baiViet.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>
+                        <div class="admin-actions">
+                            @if (baiViet.Status != 1)
+                            {
+                                <form asp-action="Approve" asp-route-id="@baiViet.Id" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-success">Duyệt</button>
+                                </form>
+                            }
+                            @if (baiViet.Status != 2)
+                            {
+                                <form asp-action="Reject" asp-route-id="@baiViet.Id" method="post" class="d-inline">
+                                    <input type="hidden" name="rejectionReason" value="Không đạt yêu cầu duyệt nội dung." />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Từ chối</button>
+                                </form>
+                            }
+                            <a asp-action="Details" asp-route-id="@baiViet.Id" class="btn btn-sm btn-outline-secondary">Chi tiết</a>
+                            <a asp-action="Edit" asp-route-id="@baiViet.Id" class="btn btn-sm btn-primary">Sửa</a>
+                            <a asp-action="Delete" asp-route-id="@baiViet.Id" class="btn btn-sm btn-danger">Xóa</a>
+                        </div>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</section>

@@ -1,98 +1,106 @@
 @model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.Post
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Sửa bài viết";
 }
 
-<h1>Edit</h1>
-
-<h4>Post</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+<section class="admin-card admin-form">
+    <div class="admin-card-header">
+        <div>
+            <h2 class="admin-card-title">Sửa bài viết</h2>
+            <p class="admin-card-subtitle">Cập nhật nội dung, trạng thái và thông tin duyệt bài.</p>
+        </div>
+    </div>
+    <div class="admin-card-body">
         <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
             <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
+
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label">Tiêu đề</label>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Content" class="control-label"></label>
-                <input asp-for="Content" class="form-control" />
+
+            <div class="mb-3">
+                <label asp-for="Content" class="form-label">Nội dung</label>
+                <textarea asp-for="Content" class="form-control" rows="6"></textarea>
                 <span asp-validation-for="Content" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="ImageUrl" class="control-label"></label>
+
+            <div class="mb-3">
+                <label asp-for="ImageUrl" class="form-label">Ảnh đại diện</label>
                 <input asp-for="ImageUrl" class="form-control" />
                 <span asp-validation-for="ImageUrl" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <input asp-for="Status" class="form-control" />
-                <span asp-validation-for="Status" class="text-danger"></span>
+
+            <div class="mb-3">
+                <label asp-for="SelectedProvinceIds" class="form-label">Tỉnh thành</label>
+                <select asp-for="SelectedProvinceIds" asp-items="ViewBag.Provinces" class="form-select" multiple size="8"></select>
+                <span asp-validation-for="SelectedProvinceIds" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="RejectionReason" class="control-label"></label>
-                <input asp-for="RejectionReason" class="form-control" />
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Status" class="form-label">Trạng thái</label>
+                    <select asp-for="Status" class="form-select">
+                        <option value="0">Chờ duyệt</option>
+                        <option value="1">Đã duyệt</option>
+                        <option value="2">Từ chối</option>
+                    </select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="CategoryId" class="form-label">Mã danh mục</label>
+                    <input asp-for="CategoryId" class="form-control" />
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="UserId" class="form-label">Mã tác giả</label>
+                    <input asp-for="UserId" class="form-control" />
+                    <span asp-validation-for="UserId" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="ApprovedBy" class="form-label">Mã người duyệt</label>
+                    <input asp-for="ApprovedBy" class="form-control" />
+                    <span asp-validation-for="ApprovedBy" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="RejectionReason" class="form-label">Lý do từ chối</label>
+                <textarea asp-for="RejectionReason" class="form-control" rows="3"></textarea>
                 <span asp-validation-for="RejectionReason" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="CategoryId" class="control-label"></label>
-                <input asp-for="CategoryId" class="form-control" />
-                <span asp-validation-for="CategoryId" class="text-danger"></span>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label asp-for="ApprovedAt" class="form-label">Thời gian duyệt</label>
+                    <input asp-for="ApprovedAt" class="form-control" />
+                    <span asp-validation-for="ApprovedAt" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="CreatedAt" class="form-label">Ngày tạo</label>
+                    <input asp-for="CreatedAt" class="form-control" />
+                    <span asp-validation-for="CreatedAt" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="UpdatedAt" class="form-label">Ngày cập nhật</label>
+                    <input asp-for="UpdatedAt" class="form-control" />
+                    <span asp-validation-for="UpdatedAt" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Category" class="control-label"></label>
-                <input asp-for="Category" class="form-control" />
-                <span asp-validation-for="Category" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <input asp-for="UserId" class="form-control" />
-                <span asp-validation-for="UserId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="User" class="control-label"></label>
-                <input asp-for="User" class="form-control" />
-                <span asp-validation-for="User" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ApprovedBy" class="control-label"></label>
-                <input asp-for="ApprovedBy" class="form-control" />
-                <span asp-validation-for="ApprovedBy" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="AdminApprover" class="control-label"></label>
-                <input asp-for="AdminApprover" class="form-control" />
-                <span asp-validation-for="AdminApprover" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ApprovedAt" class="control-label"></label>
-                <input asp-for="ApprovedAt" class="form-control" />
-                <span asp-validation-for="ApprovedAt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedAt" class="control-label"></label>
-                <input asp-for="CreatedAt" class="form-control" />
-                <span asp-validation-for="CreatedAt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UpdatedAt" class="control-label"></label>
-                <input asp-for="UpdatedAt" class="form-control" />
-                <span asp-validation-for="UpdatedAt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Quay lại</a>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+</section>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

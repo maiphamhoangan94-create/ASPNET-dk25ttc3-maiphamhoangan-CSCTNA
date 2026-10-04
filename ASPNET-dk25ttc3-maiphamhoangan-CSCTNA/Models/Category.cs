@@ -18,6 +18,10 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models
         [Display(Name = "Thẻ đường dẫn (Slug)")]
         public string? Slug { get; set; }
 
+        [StringLength(500)]
+        [Display(Name = "Ảnh danh mục")]
+        public string? ImageUrl { get; set; }
+
         public virtual ICollection<Post>? Posts { get; set; }
     }
 }

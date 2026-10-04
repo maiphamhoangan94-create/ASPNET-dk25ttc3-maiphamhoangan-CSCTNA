@@ -48,7 +48,7 @@ public class CategoriesController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,Name,Slug,Posts")] Category danhMuc)
+    public async Task<IActionResult> Create([Bind("Id,Name,Slug,ImageUrl,Posts")] Category danhMuc)
     {
         if (ModelState.IsValid)
         {
@@ -80,7 +80,7 @@ public class CategoriesController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int? id, [Bind("Id,Name,Slug,Posts")] Category danhMuc)
+    public async Task<IActionResult> Edit(int? id, [Bind("Id,Name,Slug,ImageUrl,Posts")] Category danhMuc)
     {
         if (id != danhMuc.Id)
         {
