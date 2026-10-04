@@ -20,30 +20,30 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Register(RegisterViewModel model)
+        public IActionResult Register(RegisterViewModel duLieuDangKy)
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return View(duLieuDangKy);
             }
 
-            bool isExist = _context.Users.Any(u => u.Username == model.Username || u.Email == model.Email);
-            if (isExist)
+            bool daTonTai = _context.Users.Any(nguoiDung => nguoiDung.Username == duLieuDangKy.Username || nguoiDung.Email == duLieuDangKy.Email);
+            if (daTonTai)
             {
                 ModelState.AddModelError("", "Tên đăng nhập hoặc Email đã tồn tại!");
-                return View(model);
+                return View(duLieuDangKy);
             }
 
-            var newUser = new User
+            var nguoiDungMoi = new User
             {
-                Username = model.Username,
-                Email = model.Email,
-                Password = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(model.Password)),
-                FullName = model.FullName,
+                Username = duLieuDangKy.Username,
+                Email = duLieuDangKy.Email,
+                Password = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(duLieuDangKy.Password)),
+                FullName = duLieuDangKy.FullName,
                 CreatedAt = DateTime.Now
             };
 
-            _context.Users.Add(newUser);
+            _context.Users.Add(nguoiDungMoi);
             _context.SaveChanges();
 
             ViewBag.SuccessMessage = "Đăng ký tài khoản thành công!";
@@ -58,28 +58,35 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Login(LoginViewModel model)
+        public IActionResult Login(LoginViewModel duLieuDangNhap)
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return View(duLieuDangNhap);
             }
 
-            string hashedPassword = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(model.Password));
+            string matKhauDaMaHoa = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(duLieuDangNhap.Password));
 
-            var user = _context.Users.FirstOrDefault(u =>
-                (u.Username == model.UsernameOrEmail || u.Email == model.UsernameOrEmail)
-                && u.Password == hashedPassword);
+            var nguoiDung = _context.Users.FirstOrDefault(nguoiDung =>
+                (nguoiDung.Username == duLieuDangNhap.UsernameOrEmail || nguoiDung.Email == duLieuDangNhap.UsernameOrEmail)
+                && nguoiDung.Password == matKhauDaMaHoa);
 
-            if (user != null)
+            if (nguoiDung != null)
             {
-                HttpContext.Session.SetString("Username", user.Username);
-                HttpContext.Session.SetInt32("UserId", user.UserId);
+                HttpContext.Session.SetString("Username", nguoiDung.Username);
+                HttpContext.Session.SetInt32("UserId", nguoiDung.UserId);
+                HttpContext.Session.SetString("Role", nguoiDung.Role ?? "User");
+
+                if (string.Equals(nguoiDung.Role, "Admin", StringComparison.OrdinalIgnoreCase))
+                {
+                    return RedirectToAction("Index", "Categories", new { area = "Admin" });
+                }
+
                 return RedirectToAction("Index", "Home");
             }
 
             ModelState.AddModelError("", "Tên đăng nhập/Email hoặc mật khẩu không chính xác.");
-            return View(model);
+            return View(duLieuDangNhap);
         }
 
         public IActionResult Logout()

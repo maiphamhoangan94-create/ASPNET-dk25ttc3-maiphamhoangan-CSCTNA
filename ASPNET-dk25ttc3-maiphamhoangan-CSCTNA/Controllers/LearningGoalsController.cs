@@ -19,27 +19,27 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var summary = await _adoNetReportService.GetSummaryAsync();
-            return View(summary);
+            var baoCao = await _adoNetReportService.GetSummaryAsync();
+            return View(baoCao);
         }
 
         [HttpGet]
         public async Task<IActionResult> CategoriesXml()
         {
-            var categories = await _context.Categories
+            var danhSachDanhMuc = await _context.Categories
                 .AsNoTracking()
-                .OrderBy(category => category.Name)
+                .OrderBy(danhMuc => danhMuc.Name)
                 .ToListAsync();
 
-            var document = new XDocument(
+            var taiLieuXml = new XDocument(
                 new XElement("categories",
-                    categories.Select(category =>
+                    danhSachDanhMuc.Select(danhMuc =>
                         new XElement("category",
-                            new XAttribute("id", category.Id),
-                            new XElement("name", category.Name),
-                            new XElement("slug", category.Slug ?? string.Empty)))));
+                            new XAttribute("id", danhMuc.Id),
+                            new XElement("name", danhMuc.Name),
+                            new XElement("slug", danhMuc.Slug ?? string.Empty)))));
 
-            return Content(document.ToString(), "application/xml");
+            return Content(taiLieuXml.ToString(), "application/xml");
         }
     }
 }

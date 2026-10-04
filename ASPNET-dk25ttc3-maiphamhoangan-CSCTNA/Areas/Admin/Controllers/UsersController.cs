@@ -16,12 +16,12 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var users = await _context.Users
+            var danhSachNguoiDung = await _context.Users
                 .AsNoTracking()
-                .OrderBy(user => user.Username)
+                .OrderBy(nguoiDung => nguoiDung.Username)
                 .ToListAsync();
 
-            return View(users);
+            return View(danhSachNguoiDung);
         }
 
         public async Task<IActionResult> Details(int? id)
@@ -31,11 +31,11 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var user = await _context.Users
+            var nguoiDung = await _context.Users
                 .AsNoTracking()
-                .FirstOrDefaultAsync(item => item.UserId == id);
+                .FirstOrDefaultAsync(dong => dong.UserId == id);
 
-            return user == null ? NotFound() : View(user);
+            return nguoiDung == null ? NotFound() : View(nguoiDung);
         }
 
         public IActionResult Create()
@@ -49,22 +49,22 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Username,Email,Password,FullName,Role")] User user)
+        public async Task<IActionResult> Create([Bind("Username,Email,Password,FullName,Role")] User nguoiDung)
         {
-            if (await IsUsernameOrEmailExistsAsync(user.Username, user.Email))
+            if (await IsUsernameOrEmailExistsAsync(nguoiDung.Username, nguoiDung.Email))
             {
                 ModelState.AddModelError("", "Ten dang nhap hoac email da ton tai.");
             }
 
             if (!ModelState.IsValid)
             {
-                return View(user);
+                return View(nguoiDung);
             }
 
-            user.Password = EncodePassword(user.Password);
-            user.CreatedAt = DateTime.Now;
+            nguoiDung.Password = EncodePassword(nguoiDung.Password);
+            nguoiDung.CreatedAt = DateTime.Now;
 
-            _context.Users.Add(user);
+            _context.Users.Add(nguoiDung);
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
@@ -77,55 +77,55 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
+            var nguoiDung = await _context.Users.FindAsync(id);
+            if (nguoiDung == null)
             {
                 return NotFound();
             }
 
-            user.Password = string.Empty;
-            return View(user);
+            nguoiDung.Password = string.Empty;
+            return View(nguoiDung);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserId,Username,Email,Password,FullName,Role,CreatedAt")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("UserId,Username,Email,Password,FullName,Role,CreatedAt")] User nguoiDung)
         {
-            if (id != user.UserId)
+            if (id != nguoiDung.UserId)
             {
                 return NotFound();
             }
 
-            if (string.IsNullOrWhiteSpace(user.Password))
+            if (string.IsNullOrWhiteSpace(nguoiDung.Password))
             {
                 ModelState.Remove("Password");
             }
 
-            if (await IsUsernameOrEmailExistsAsync(user.Username, user.Email, user.UserId))
+            if (await IsUsernameOrEmailExistsAsync(nguoiDung.Username, nguoiDung.Email, nguoiDung.UserId))
             {
                 ModelState.AddModelError("", "Ten dang nhap hoac email da ton tai.");
             }
 
             if (!ModelState.IsValid)
             {
-                return View(user);
+                return View(nguoiDung);
             }
 
-            var existingUser = await _context.Users.FindAsync(id);
-            if (existingUser == null)
+            var nguoiDungCu = await _context.Users.FindAsync(id);
+            if (nguoiDungCu == null)
             {
                 return NotFound();
             }
 
-            existingUser.Username = user.Username;
-            existingUser.Email = user.Email;
-            existingUser.FullName = user.FullName;
-            existingUser.Role = user.Role;
-            existingUser.CreatedAt = user.CreatedAt;
+            nguoiDungCu.Username = nguoiDung.Username;
+            nguoiDungCu.Email = nguoiDung.Email;
+            nguoiDungCu.FullName = nguoiDung.FullName;
+            nguoiDungCu.Role = nguoiDung.Role;
+            nguoiDungCu.CreatedAt = nguoiDung.CreatedAt;
 
-            if (!string.IsNullOrWhiteSpace(user.Password))
+            if (!string.IsNullOrWhiteSpace(nguoiDung.Password))
             {
-                existingUser.Password = EncodePassword(user.Password);
+                nguoiDungCu.Password = EncodePassword(nguoiDung.Password);
             }
 
             await _context.SaveChangesAsync();
@@ -139,47 +139,47 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var user = await _context.Users
+            var nguoiDung = await _context.Users
                 .AsNoTracking()
-                .FirstOrDefaultAsync(item => item.UserId == id);
+                .FirstOrDefaultAsync(dong => dong.UserId == id);
 
-            return user == null ? NotFound() : View(user);
+            return nguoiDung == null ? NotFound() : View(nguoiDung);
         }
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
+            var nguoiDung = await _context.Users.FindAsync(id);
+            if (nguoiDung == null)
             {
                 return RedirectToAction(nameof(Index));
             }
 
             try
             {
-                _context.Users.Remove(user);
+                _context.Users.Remove(nguoiDung);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
                 ModelState.AddModelError("", "Khong the xoa user nay vi dang co du lieu lien quan.");
-                return View(user);
+                return View(nguoiDung);
             }
 
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task<bool> IsUsernameOrEmailExistsAsync(string username, string email, int? ignoreUserId = null)
+        private async Task<bool> IsUsernameOrEmailExistsAsync(string taiKhoan, string email, int? maNguoiDungBoQua = null)
         {
-            return await _context.Users.AnyAsync(user =>
-                (user.Username == username || user.Email == email) &&
-                (!ignoreUserId.HasValue || user.UserId != ignoreUserId.Value));
+            return await _context.Users.AnyAsync(nguoiDung =>
+                (nguoiDung.Username == taiKhoan || nguoiDung.Email == email) &&
+                (!maNguoiDungBoQua.HasValue || nguoiDung.UserId != maNguoiDungBoQua.Value));
         }
 
-        private static string EncodePassword(string password)
+        private static string EncodePassword(string matKhau)
         {
-            return Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(password));
+            return Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(matKhau));
         }
     }
 }

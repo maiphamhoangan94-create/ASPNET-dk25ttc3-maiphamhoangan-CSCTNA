@@ -13,99 +13,99 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Title)
+                @Html.DisplayNameFor(baiViet => baiViet.Title)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Content)
+                @Html.DisplayNameFor(baiViet => baiViet.Content)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ImageUrl)
+                @Html.DisplayNameFor(baiViet => baiViet.ImageUrl)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Status)
+                @Html.DisplayNameFor(baiViet => baiViet.Status)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.RejectionReason)
+                @Html.DisplayNameFor(baiViet => baiViet.RejectionReason)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CategoryId)
+                @Html.DisplayNameFor(baiViet => baiViet.CategoryId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Category)
+                @Html.DisplayNameFor(baiViet => baiViet.Category)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.UserId)
+                @Html.DisplayNameFor(baiViet => baiViet.UserId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.User)
+                @Html.DisplayNameFor(baiViet => baiViet.User)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ApprovedBy)
+                @Html.DisplayNameFor(baiViet => baiViet.ApprovedBy)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.AdminApprover)
+                @Html.DisplayNameFor(baiViet => baiViet.AdminApprover)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ApprovedAt)
+                @Html.DisplayNameFor(baiViet => baiViet.ApprovedAt)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
+                @Html.DisplayNameFor(baiViet => baiViet.CreatedAt)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.UpdatedAt)
+                @Html.DisplayNameFor(baiViet => baiViet.UpdatedAt)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var baiViet in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(model => item.Title)
+                @Html.DisplayFor(giaTri => baiViet.Title)
             </td>
             <td>
-                @Html.DisplayFor(model => item.Content)
+                @Html.DisplayFor(giaTri => baiViet.Content)
             </td>
             <td>
-                @Html.DisplayFor(model => item.ImageUrl)
+                @Html.DisplayFor(giaTri => baiViet.ImageUrl)
             </td>
             <td>
-                @Html.DisplayFor(model => item.Status)
+                @Html.DisplayFor(giaTri => baiViet.Status)
             </td>
             <td>
-                @Html.DisplayFor(model => item.RejectionReason)
+                @Html.DisplayFor(giaTri => baiViet.RejectionReason)
             </td>
             <td>
-                @Html.DisplayFor(model => item.CategoryId)
+                @Html.DisplayFor(giaTri => baiViet.CategoryId)
             </td>
             <td>
-                @Html.DisplayFor(model => item.Category)
+                @Html.DisplayFor(giaTri => baiViet.Category)
             </td>
             <td>
-                @Html.DisplayFor(model => item.UserId)
+                @Html.DisplayFor(giaTri => baiViet.UserId)
             </td>
             <td>
-                @Html.DisplayFor(model => item.User)
+                @Html.DisplayFor(giaTri => baiViet.User)
             </td>
             <td>
-                @Html.DisplayFor(model => item.ApprovedBy)
+                @Html.DisplayFor(giaTri => baiViet.ApprovedBy)
             </td>
             <td>
-                @Html.DisplayFor(model => item.AdminApprover)
+                @Html.DisplayFor(giaTri => baiViet.AdminApprover)
             </td>
             <td>
-                @Html.DisplayFor(model => item.ApprovedAt)
+                @Html.DisplayFor(giaTri => baiViet.ApprovedAt)
             </td>
             <td>
-                @Html.DisplayFor(model => item.CreatedAt)
+                @Html.DisplayFor(giaTri => baiViet.CreatedAt)
             </td>
             <td>
-                @Html.DisplayFor(model => item.UpdatedAt)
+                @Html.DisplayFor(giaTri => baiViet.UpdatedAt)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Edit" asp-route-id="@baiViet.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@baiViet.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@baiViet.Id">Delete</a>
             </td>
         </tr>
 }

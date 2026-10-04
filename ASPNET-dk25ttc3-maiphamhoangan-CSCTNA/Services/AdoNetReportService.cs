@@ -14,23 +14,23 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Services
 
         public async Task<CourseGoalSummary> GetSummaryAsync()
         {
-            var summary = new CourseGoalSummary();
+            var baoCao = new CourseGoalSummary();
 
-            await using var connection = new SqlConnection(_connectionString);
-            await connection.OpenAsync();
+            await using var ketNoi = new SqlConnection(_connectionString);
+            await ketNoi.OpenAsync();
 
-            summary.UserCount = await CountTableRowsAsync(connection, "Users");
-            summary.CategoryCount = await CountTableRowsAsync(connection, "Categories");
-            summary.PostCount = await CountTableRowsAsync(connection, "Posts");
+            baoCao.UserCount = await CountTableRowsAsync(ketNoi, "Users");
+            baoCao.CategoryCount = await CountTableRowsAsync(ketNoi, "Categories");
+            baoCao.PostCount = await CountTableRowsAsync(ketNoi, "Posts");
 
-            return summary;
+            return baoCao;
         }
 
-        private static async Task<int> CountTableRowsAsync(SqlConnection connection, string tableName)
+        private static async Task<int> CountTableRowsAsync(SqlConnection ketNoi, string tenBang)
         {
-            await using var command = new SqlCommand($"SELECT COUNT(*) FROM [{tableName}]", connection);
-            var result = await command.ExecuteScalarAsync();
-            return Convert.ToInt32(result);
+            await using var cauLenh = new SqlCommand($"SELECT COUNT(*) FROM [{tenBang}]", ketNoi);
+            var ketQua = await cauLenh.ExecuteScalarAsync();
+            return Convert.ToInt32(ketQua);
         }
     }
 }

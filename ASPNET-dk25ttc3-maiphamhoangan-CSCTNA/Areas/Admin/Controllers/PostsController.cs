@@ -27,14 +27,14 @@ public class PostsController : Controller
             return NotFound();
         }
 
-        var post = await _context.Posts
-            .FirstOrDefaultAsync(m => m.Id == id);
-        if (post == null)
+        var baiViet = await _context.Posts
+            .FirstOrDefaultAsync(dong => dong.Id == id);
+        if (baiViet == null)
         {
             return NotFound();
         }
 
-        return View(post);
+        return View(baiViet);
     }
 
     // GET: POSTS/Create
@@ -48,15 +48,15 @@ public class PostsController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,Title,Content,ImageUrl,Status,RejectionReason,CategoryId,Category,UserId,User,ApprovedBy,AdminApprover,ApprovedAt,CreatedAt,UpdatedAt")] Post post)
+    public async Task<IActionResult> Create([Bind("Id,Title,Content,ImageUrl,Status,RejectionReason,CategoryId,Category,UserId,User,ApprovedBy,AdminApprover,ApprovedAt,CreatedAt,UpdatedAt")] Post baiViet)
     {
         if (ModelState.IsValid)
         {
-            _context.Add(post);
+            _context.Add(baiViet);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        return View(post);
+        return View(baiViet);
     }
 
     // GET: POSTS/Edit/5
@@ -67,12 +67,12 @@ public class PostsController : Controller
             return NotFound();
         }
 
-        var post = await _context.Posts.FindAsync(id);
-        if (post == null)
+        var baiViet = await _context.Posts.FindAsync(id);
+        if (baiViet == null)
         {
             return NotFound();
         }
-        return View(post);
+        return View(baiViet);
     }
 
     // POST: POSTS/Edit/5
@@ -80,9 +80,9 @@ public class PostsController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int? id, [Bind("Id,Title,Content,ImageUrl,Status,RejectionReason,CategoryId,Category,UserId,User,ApprovedBy,AdminApprover,ApprovedAt,CreatedAt,UpdatedAt")] Post post)
+    public async Task<IActionResult> Edit(int? id, [Bind("Id,Title,Content,ImageUrl,Status,RejectionReason,CategoryId,Category,UserId,User,ApprovedBy,AdminApprover,ApprovedAt,CreatedAt,UpdatedAt")] Post baiViet)
     {
-        if (id != post.Id)
+        if (id != baiViet.Id)
         {
             return NotFound();
         }
@@ -91,12 +91,12 @@ public class PostsController : Controller
         {
             try
             {
-                _context.Update(post);
+                _context.Update(baiViet);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PostExists(post.Id))
+                if (!PostExists(baiViet.Id))
                 {
                     return NotFound();
                 }
@@ -107,7 +107,7 @@ public class PostsController : Controller
             }
             return RedirectToAction(nameof(Index));
         }
-        return View(post);
+        return View(baiViet);
     }
 
     // GET: POSTS/Delete/5
@@ -118,14 +118,14 @@ public class PostsController : Controller
             return NotFound();
         }
 
-        var post = await _context.Posts
-            .FirstOrDefaultAsync(m => m.Id == id);
-        if (post == null)
+        var baiViet = await _context.Posts
+            .FirstOrDefaultAsync(dong => dong.Id == id);
+        if (baiViet == null)
         {
             return NotFound();
         }
 
-        return View(post);
+        return View(baiViet);
     }
 
     // POST: POSTS/Delete/5
@@ -133,10 +133,10 @@ public class PostsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int? id)
     {
-        var post = await _context.Posts.FindAsync(id);
-        if (post != null)
+        var baiViet = await _context.Posts.FindAsync(id);
+        if (baiViet != null)
         {
-            _context.Posts.Remove(post);
+            _context.Posts.Remove(baiViet);
         }
 
         await _context.SaveChangesAsync();
@@ -145,6 +145,6 @@ public class PostsController : Controller
 
     private bool PostExists(int? id)
     {
-        return _context.Posts.Any(e => e.Id == id);
+        return _context.Posts.Any(dong => dong.Id == id);
     }
 }

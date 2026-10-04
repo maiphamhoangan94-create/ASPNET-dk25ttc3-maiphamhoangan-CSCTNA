@@ -10,8 +10,8 @@ public partial class AnmphDbContext : DbContext
     {
     }
 
-    public AnmphDbContext(DbContextOptions<AnmphDbContext> options)
-        : base(options)
+    public AnmphDbContext(DbContextOptions<AnmphDbContext> cauHinh)
+        : base(cauHinh)
     {
     }
 
@@ -19,10 +19,10 @@ public partial class AnmphDbContext : DbContext
     public DbSet<Category> Categories { get; set; }
     public DbSet<Post> Posts { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder trinhTaoModel)
     {
-        OnModelCreatingPartial(modelBuilder);
+        OnModelCreatingPartial(trinhTaoModel);
     }
 
-    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+    partial void OnModelCreatingPartial(ModelBuilder trinhTaoModel);
 }

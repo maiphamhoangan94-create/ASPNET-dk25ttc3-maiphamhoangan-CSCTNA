@@ -27,14 +27,14 @@ public class CategoriesController : Controller
             return NotFound();
         }
 
-        var category = await _context.Categories
-            .FirstOrDefaultAsync(m => m.Id == id);
-        if (category == null)
+        var danhMuc = await _context.Categories
+            .FirstOrDefaultAsync(dong => dong.Id == id);
+        if (danhMuc == null)
         {
             return NotFound();
         }
 
-        return View(category);
+        return View(danhMuc);
     }
 
     // GET: CATEGORYS/Create
@@ -48,15 +48,15 @@ public class CategoriesController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,Name,Slug,Posts")] Category category)
+    public async Task<IActionResult> Create([Bind("Id,Name,Slug,Posts")] Category danhMuc)
     {
         if (ModelState.IsValid)
         {
-            _context.Add(category);
+            _context.Add(danhMuc);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        return View(category);
+        return View(danhMuc);
     }
 
     // GET: CATEGORYS/Edit/5
@@ -67,12 +67,12 @@ public class CategoriesController : Controller
             return NotFound();
         }
 
-        var category = await _context.Categories.FindAsync(id);
-        if (category == null)
+        var danhMuc = await _context.Categories.FindAsync(id);
+        if (danhMuc == null)
         {
             return NotFound();
         }
-        return View(category);
+        return View(danhMuc);
     }
 
     // POST: CATEGORYS/Edit/5
@@ -80,9 +80,9 @@ public class CategoriesController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int? id, [Bind("Id,Name,Slug,Posts")] Category category)
+    public async Task<IActionResult> Edit(int? id, [Bind("Id,Name,Slug,Posts")] Category danhMuc)
     {
-        if (id != category.Id)
+        if (id != danhMuc.Id)
         {
             return NotFound();
         }
@@ -91,12 +91,12 @@ public class CategoriesController : Controller
         {
             try
             {
-                _context.Update(category);
+                _context.Update(danhMuc);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CategoryExists(category.Id))
+                if (!CategoryExists(danhMuc.Id))
                 {
                     return NotFound();
                 }
@@ -107,7 +107,7 @@ public class CategoriesController : Controller
             }
             return RedirectToAction(nameof(Index));
         }
-        return View(category);
+        return View(danhMuc);
     }
 
     // GET: CATEGORYS/Delete/5
@@ -118,14 +118,14 @@ public class CategoriesController : Controller
             return NotFound();
         }
 
-        var category = await _context.Categories
-            .FirstOrDefaultAsync(m => m.Id == id);
-        if (category == null)
+        var danhMuc = await _context.Categories
+            .FirstOrDefaultAsync(dong => dong.Id == id);
+        if (danhMuc == null)
         {
             return NotFound();
         }
 
-        return View(category);
+        return View(danhMuc);
     }
 
     // POST: CATEGORYS/Delete/5
@@ -133,10 +133,10 @@ public class CategoriesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int? id)
     {
-        var category = await _context.Categories.FindAsync(id);
-        if (category != null)
+        var danhMuc = await _context.Categories.FindAsync(id);
+        if (danhMuc != null)
         {
-            _context.Categories.Remove(category);
+            _context.Categories.Remove(danhMuc);
         }
 
         await _context.SaveChangesAsync();
@@ -145,6 +145,6 @@ public class CategoriesController : Controller
 
     private bool CategoryExists(int? id)
     {
-        return _context.Categories.Any(e => e.Id == id);
+        return _context.Categories.Any(dong => dong.Id == id);
     }
 }

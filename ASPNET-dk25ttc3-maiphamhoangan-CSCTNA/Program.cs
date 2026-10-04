@@ -2,52 +2,52 @@ using ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models;
 using ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Services;
 using Microsoft.EntityFrameworkCore;
 
-var builder = WebApplication.CreateBuilder(args);
+var trinhTaoWeb = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var chuoiKetNoi = trinhTaoWeb.Configuration.GetConnectionString("DefaultConnection");
 
-builder.Services.AddDbContext<AnmphDbContext>(options =>
-    options.UseSqlServer(connectionString));
+trinhTaoWeb.Services.AddDbContext<AnmphDbContext>(cauHinh =>
+    cauHinh.UseSqlServer(chuoiKetNoi));
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<AdoNetReportService>();
+trinhTaoWeb.Services.AddControllersWithViews();
+trinhTaoWeb.Services.AddScoped<AdoNetReportService>();
 
-builder.Services.AddSession(options =>
+trinhTaoWeb.Services.AddSession(cauHinh =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
+    cauHinh.IdleTimeout = TimeSpan.FromMinutes(30);
+    cauHinh.Cookie.HttpOnly = true;
+    cauHinh.Cookie.IsEssential = true;
 });
 
-var app = builder.Build();
+var ungDung = trinhTaoWeb.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (!ungDung.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    ungDung.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    ungDung.UseHsts();
 }
 
-app.UseHttpsRedirection();
-app.UseRouting();
+ungDung.UseHttpsRedirection();
+ungDung.UseRouting();
 
-app.UseSession();
+ungDung.UseSession();
 
-app.UseAuthorization();
+ungDung.UseAuthorization();
 
-app.MapStaticAssets();
+ungDung.MapStaticAssets();
 
-app.MapControllerRoute(
+ungDung.MapControllerRoute(
     name: "areas",
     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
-app.MapControllerRoute(
+ungDung.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
-app.MapControllers();
+ungDung.MapControllers();
 
-app.Run();
+ungDung.Run();

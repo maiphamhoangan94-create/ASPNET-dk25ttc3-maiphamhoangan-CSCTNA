@@ -13,33 +13,33 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                @Html.DisplayNameFor(danhMuc => danhMuc.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Slug)
+                @Html.DisplayNameFor(danhMuc => danhMuc.Slug)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Posts)
+                @Html.DisplayNameFor(danhMuc => danhMuc.Posts)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var danhMuc in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(model => item.Name)
+                @Html.DisplayFor(giaTri => danhMuc.Name)
             </td>
             <td>
-                @Html.DisplayFor(model => item.Slug)
+                @Html.DisplayFor(giaTri => danhMuc.Slug)
             </td>
             <td>
-                @Html.DisplayFor(model => item.Posts)
+                @Html.DisplayFor(giaTri => danhMuc.Posts)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Edit" asp-route-id="@danhMuc.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@danhMuc.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@danhMuc.Id">Delete</a>
             </td>
         </tr>
 }

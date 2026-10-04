@@ -18,35 +18,35 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers.Api
         [HttpGet]
         public async Task<IActionResult> GetCategories()
         {
-            var categories = await _context.Categories
+            var danhSachDanhMuc = await _context.Categories
                 .AsNoTracking()
-                .OrderBy(category => category.Name)
-                .Select(category => new
+                .OrderBy(danhMuc => danhMuc.Name)
+                .Select(danhMuc => new
                 {
-                    category.Id,
-                    category.Name,
-                    category.Slug
+                    danhMuc.Id,
+                    danhMuc.Name,
+                    danhMuc.Slug
                 })
                 .ToListAsync();
 
-            return Ok(categories);
+            return Ok(danhSachDanhMuc);
         }
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetCategory(int id)
         {
-            var category = await _context.Categories
+            var danhMuc = await _context.Categories
                 .AsNoTracking()
-                .Where(item => item.Id == id)
-                .Select(item => new
+                .Where(dong => dong.Id == id)
+                .Select(dong => new
                 {
-                    item.Id,
-                    item.Name,
-                    item.Slug
+                    dong.Id,
+                    dong.Name,
+                    dong.Slug
                 })
                 .FirstOrDefaultAsync();
 
-            return category == null ? NotFound() : Ok(category);
+            return danhMuc == null ? NotFound() : Ok(danhMuc);
         }
     }
 }

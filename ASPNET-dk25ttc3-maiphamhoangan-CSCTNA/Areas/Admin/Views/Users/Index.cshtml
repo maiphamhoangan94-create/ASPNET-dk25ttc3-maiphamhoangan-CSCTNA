@@ -22,18 +22,18 @@
             </tr>
         </thead>
         <tbody>
-        @foreach (var item in Model)
+        @foreach (var nguoiDung in Model)
         {
             <tr>
-                <td>@item.Username</td>
-                <td>@item.Email</td>
-                <td>@item.FullName</td>
-                <td>@item.Role</td>
-                <td>@item.CreatedAt?.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@nguoiDung.Username</td>
+                <td>@nguoiDung.Email</td>
+                <td>@nguoiDung.FullName</td>
+                <td>@nguoiDung.Role</td>
+                <td>@nguoiDung.CreatedAt?.ToString("dd/MM/yyyy HH:mm")</td>
                 <td class="text-end">
-                    <a asp-action="Details" asp-route-id="@item.UserId">Chi tiet</a> |
-                    <a asp-action="Edit" asp-route-id="@item.UserId">Sua</a> |
-                    <a asp-action="Delete" asp-route-id="@item.UserId">Xoa</a>
+                    <a asp-action="Details" asp-route-id="@nguoiDung.UserId">Chi tiet</a> |
+                    <a asp-action="Edit" asp-route-id="@nguoiDung.UserId">Sua</a> |
+                    <a asp-action="Delete" asp-route-id="@nguoiDung.UserId">Xoa</a>
                 </td>
             </tr>
         }
