@@ -1,30 +1,17 @@
-﻿<!DOCTYPE html>
-@using Microsoft.EntityFrameworkCore
-@inject AnmphDbContext CategoryContext
-@{
-    var tasteCategories = await CategoryContext.Categories
-        .AsNoTracking()
-        .OrderBy(category => category.Name)
-        .Take(5)
-        .ToListAsync();
-
-    const string categoryFallbackImage = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400";
-}
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bếp Nhà - Nơi khởi nguồn cảm hứng bữa cơm nhà</title>
-    <!-- Bootstrap 5 CSS -->
+    <title>@(ViewData["Title"] ?? "Bếp Nhà") - Bếp Nhà</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Afacad:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
-
-    <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg bg-warm sticky-top py-3">
         <div class="container">
             <a class="navbar-brand font-serif fw-bold text-terracotta fs-3" asp-controller="Home" asp-action="Index">Bếp Nhà</a>
@@ -55,295 +42,8 @@
         </div>
     </nav>
 
-    <!-- HERO SECTION -->
-    <section class="bg-warm py-5">
-        <div class="container py-4">
-            <div class="row align-items-center g-5">
-                <div class="col-lg-6">
-                    <span class="text-uppercase tracking-wider text-muted small fw-semibold">CÔNG THỨC & CẢM HỨNG</span>
-                    <h1 class="font-serif display-4 fw-bold text-dark mt-2 mb-4">
-                        Nơi khởi nguồn cảm hứng và sẻ chia vị ngon cơm nhà.
-                    </h1>
-                    <p class="text-secondary lead fs-6 mb-4">
-                        Mỗi món ăn là một câu chuyện, mỗi hương vị là một kỷ niệm. Cùng Bếp Nhà lưu giữ và lan tỏa những bữa ăn ấm áp gia đình Việt.
-                    </p>
-                    <div class="d-flex flex-wrap gap-3 mb-4">
-                        <a href="#" class="btn btn-terracotta rounded-pill px-4 py-2">Khám phá công thức</a>
-                        <a href="#" class="btn btn-outline-dark rounded-pill px-4 py-2">Tìm kiếm theo vị</a>
-                    </div>
-                    <div class="d-flex gap-4 text-muted small pt-2">
-                        <span><i class="fa-solid fa-check text-terracotta me-1"></i> Không cần đăng ký</span>
-                        <span><i class="fa-solid fa-check text-terracotta me-1"></i> Miễn phí 100%</span>
-                        <span><i class="fa-solid fa-check text-terracotta me-1"></i> Chuẩn vị ba miền</span>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="rounded-5 overflow-hidden shadow-lg">
-                        <img src="https://images.unsplash.com/photo-1541832676-9b763b0239ab?q=80&w=800" class="img-fluid w-100 object-fit-cover" style="max-height: 480px;" alt="Bữa cơm nhà">
-                    </div>
-                </div>
-            </div>
-
-            <!-- STATS -->
-            <div class="row text-center g-4 mt-5 pt-4 border-top">
-                <div class="col-6 col-md-3">
-                    <h2 class="font-serif fw-bold text-terracotta display-6">15,000+</h2>
-                    <p class="text-muted small mb-0">Công thức cơm nhà</p>
-                </div>
-                <div class="col-6 col-md-3">
-                    <h2 class="font-serif fw-bold text-terracotta display-6">250K+</h2>
-                    <p class="text-muted small mb-0">Thành viên cộng đồng</p>
-                </div>
-                <div class="col-6 col-md-3">
-                    <h2 class="font-serif fw-bold text-terracotta display-6">64/64</h2>
-                    <p class="text-muted small mb-0">Tỉnh thành bao phủ</p>
-                </div>
-                <div class="col-6 col-md-3">
-                    <h2 class="font-serif fw-bold text-terracotta display-6">4.9★</h2>
-                    <p class="text-muted small mb-0">Đánh giá hài lòng</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECTION 2: ĐỊNH NGHĨA MÂM CƠM NHÀ -->
-    <section class="py-5 bg-white">
-        <div class="container py-4">
-            <div class="d-flex justify-content-between align-items-end mb-4">
-                <div>
-                    <span class="text-uppercase tracking-wider text-muted small fw-semibold">KHÁM PHÁ THEO KHẨU VỊ</span>
-                    <h2 class="font-serif fw-bold text-dark mt-1">Định nghĩa mâm cơm nhà bằng hương vị bạn yêu thích nhất</h2>
-                </div>
-                <a href="#taste-categories" class="text-terracotta text-decoration-none fw-semibold small d-none d-md-inline">Xem tất cả hương vị →</a>
-            </div>
-
-            <div class="row g-3" id="taste-categories">
-                @if (tasteCategories.Any())
-                {
-                    foreach (var category in tasteCategories)
-                    {
-                        var categoryImage = string.IsNullOrWhiteSpace(category.ImageUrl) ? categoryFallbackImage : category.ImageUrl;
-                        var categoryLink = string.IsNullOrWhiteSpace(category.Slug) ? $"#category-{category.Id}" : $"#category-{category.Slug}";
-
-                        <div class="col-6 col-md-4 col-lg-2-4">
-                            <a href="@categoryLink" class="card card-taste border-0 rounded-4 overflow-hidden text-white shadow-sm h-100 text-decoration-none">
-                                <img src="@categoryImage" class="card-img h-100 object-fit-cover" alt="@category.Name">
-                                <div class="card-img-overlay d-flex align-items-end p-3 bg-dark-gradient">
-                                    <h6 class="card-title fw-bold mb-0">@category.Name</h6>
-                                </div>
-                            </a>
-                        </div>
-                    }
-                }
-                else
-                {
-                    <div class="col-12">
-                        <p class="text-muted mb-0">Chưa có danh mục món ăn để hiển thị.</p>
-                    </div>
-                }
-            </div>
-        </div>
-    </section>
-
-    <!-- SECTION 3: CÔNG THỨC ĐƯỢC KHUYÊN NẤU -->
-    <section class="py-5 bg-warm">
-        <div class="container py-4">
-            <div class="d-flex justify-content-between align-items-end mb-4">
-                <div>
-                    <span class="text-uppercase tracking-wider text-muted small fw-semibold">GỢI Ý HÔM NAY CHO BẠN</span>
-                    <h2 class="font-serif fw-bold text-dark mt-1">Hôm nay Bếp Nhà thèm món gì? Thử ngay công thức được khuyên nấu!</h2>
-                </div>
-                <a href="#" class="btn btn-terracotta rounded-pill px-4 d-none d-md-inline">Khám phá tất cả công thức</a>
-            </div>
-
-            <div class="row g-4">
-                <!-- Recipe 1 -->
-                <div class="col-md-6 col-lg-3">
-                    <div class="card card-recipe h-100 border-0 rounded-4 shadow-sm overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1541832676-9b763b0239ab?w=400" class="card-img-top recipe-img" alt="Món ăn">
-                        <div class="card-body p-3">
-                            <span class="badge bg-light text-terracotta border mb-2">Món chính</span>
-                            <h6 class="card-title fw-bold text-dark mb-2">Bò Cuộn Sả Nướng Than Hoa Thơm Lừng</h6>
-                            <div class="d-flex justify-content-between text-muted extra-small">
-                                <span><i class="fa-regular fa-clock me-1"></i> 35 phút</span>
-                                <span><i class="fa-solid fa-signal me-1"></i> Dễ</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Recipe 2 -->
-                <div class="col-md-6 col-lg-3">
-                    <div class="card card-recipe h-100 border-0 rounded-4 shadow-sm overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400" class="card-img-top recipe-img" alt="Món ăn">
-                        <div class="card-body p-3">
-                            <span class="badge bg-light text-terracotta border mb-2">Món kho</span>
-                            <h6 class="card-title fw-bold text-dark mb-2">Thịt Kho Tàu Sốt Tiêu Xanh Đậm Đà</h6>
-                            <div class="d-flex justify-content-between text-muted extra-small">
-                                <span><i class="fa-regular fa-clock me-1"></i> 45 phút</span>
-                                <span><i class="fa-solid fa-signal me-1"></i> Trung bình</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Recipe 3 -->
-                <div class="col-md-6 col-lg-3">
-                    <div class="card card-recipe h-100 border-0 rounded-4 shadow-sm overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400" class="card-img-top recipe-img" alt="Món ăn">
-                        <div class="card-body p-3">
-                            <span class="badge bg-light text-terracotta border mb-2">Món canh</span>
-                            <h6 class="card-title fw-bold text-dark mb-2">Canh Cua Đồng Nấu Rêu Cà Chua Thanh Mát</h6>
-                            <div class="d-flex justify-content-between text-muted extra-small">
-                                <span><i class="fa-regular fa-clock me-1"></i> 25 phút</span>
-                                <span><i class="fa-solid fa-signal me-1"></i> Dễ</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Recipe 4 -->
-                <div class="col-md-6 col-lg-3">
-                    <div class="card card-recipe h-100 border-0 rounded-4 shadow-sm overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1567620832903-9fc6debc209f?w=400" class="card-img-top recipe-img" alt="Món ăn">
-                        <div class="card-body p-3">
-                            <span class="badge bg-light text-terracotta border mb-2">Món chè</span>
-                            <h6 class="card-title fw-bold text-dark mb-2">Chè Chuối Chưng Nước Cốt Dừa Béo Béo Dẻo Thơm</h6>
-                            <div class="d-flex justify-content-between text-muted extra-small">
-                                <span><i class="fa-regular fa-clock me-1"></i> 30 phút</span>
-                                <span><i class="fa-solid fa-signal me-1"></i> Dễ</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     @RenderBody()
 
-    <!-- QUOTE SECTION -->
-    <section class="py-5 bg-white text-center">
-        <div class="container py-4">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <i class="fa-solid fa-quote-left text-terracotta opacity-25 fs-1 mb-3"></i>
-                    <blockquote class="font-serif fs-4 fw-normal text-dark fst-italic lh-base mb-3">
-                        "Hương vị của quê hương không nằm ở những gia vị xa xỉ, mà nằm ở ngọn lửa ấm áp trong căn bếp nhỏ của mẹ, và những tiếng cười giòn tan đón chờ bữa cơm chiều sau ngày dài bận rộn."
-                    </blockquote>
-                    <p class="text-terracotta font-serif fw-bold">— Bếp Trưởng Bếp Nhà —</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECTION 4: GÓC BẾP ƯU TÚ -->
-    <section class="py-5 bg-warm">
-        <div class="container py-4">
-            <div class="row align-items-center g-5">
-                <div class="col-lg-5">
-                    <div class="rounded-5 overflow-hidden shadow">
-                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=600" class="img-fluid w-100" alt="Bà Nội Sáu">
-                    </div>
-                </div>
-                <div class="col-lg-7">
-                    <span class="text-uppercase tracking-wider text-muted small fw-semibold">GÓC BẾP ƯU TÚ THÁNG NÀY</span>
-                    <h2 class="font-serif display-6 fw-bold text-dark mt-1 mb-3">Bà Nội Sáu & Góc Bếp Miền Tây</h2>
-                    <p class="text-secondary mb-4">
-                        Gắn bó hơn 40 năm với gian bếp củi vùng sông nước, Bà Nội Sáu mang đến những công thức món ăn mặn mòi vị phù sa, chân chất mà đậm đà tình thân.
-                    </p>
-                    <div class="card border-0 rounded-4 p-3 mb-4 bg-white shadow-sm">
-                        <div class="d-flex align-items-center gap-3">
-                            <img src="https://images.unsplash.com/photo-1512058564366-18510be2db19?w=100" class="rounded-3 object-fit-cover" width="60" height="60" alt="Món tiêu biểu">
-                            <div>
-                                <span class="badge bg-terracotta-light text-terracotta mb-1">Món Nổi Bật Của Gian Bếp</span>
-                                <h6 class="fw-bold text-dark mb-0">Cá Lóc Kho Tộ Đốt Niêu Đất Sông Mê Kông</h6>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="d-flex gap-3">
-                        <a href="#" class="btn btn-terracotta rounded-pill px-4">Ghé thăm gian bếp này</a>
-                        <a href="#" class="btn btn-outline-secondary rounded-pill px-4">Khám phá góc bếp khác</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECTION 5: TESTIMONIALS -->
-    <section class="py-5 bg-white">
-        <div class="container py-4">
-            <div class="text-center mb-5">
-                <span class="text-uppercase tracking-wider text-muted small fw-semibold">CẢM NHẬN TỪ CỘNG ĐỒNG</span>
-                <h2 class="font-serif fw-bold text-dark mt-1">Hạnh phúc lấp đầy gian bếp của gia đình Việt khắp thế giới</h2>
-            </div>
-
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="card border-0 rounded-4 p-4 bg-warm h-100">
-                        <p class="card-text text-secondary small mb-4">
-                            "Từ ngày biết Bếp Nhà, mình không còn phải đau đầu nghĩ xem 'Hôm nay ăn gì' nữa. Các công thức chuẩn vị và rất dễ làm theo!"
-                        </p>
-                        <div class="d-flex align-items-center gap-3 mt-auto">
-                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" class="rounded-circle" width="40" height="40" alt="Avatar">
-                            <div>
-                                <h6 class="fw-bold mb-0 text-dark small">Thảo My</h6>
-                                <small class="text-muted extra-small">Hà Nội, Việt Nam</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card border-0 rounded-4 p-4 bg-warm h-100">
-                        <p class="card-text text-secondary small mb-4">
-                            "Xa quê hương bao nhiêu năm, nhờ Bếp Nhà mà mình tìm lại được chính xác hương vị canh chua cá lóc ngày xưa mẹ nấu."
-                        </p>
-                        <div class="d-flex align-items-center gap-3 mt-auto">
-                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100" class="rounded-circle" width="40" height="40" alt="Avatar">
-                            <div>
-                                <h6 class="fw-bold mb-0 text-dark small">Minh Cường</h6>
-                                <small class="text-muted extra-small">Tokyo, Nhật Bản</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card border-0 rounded-4 p-4 bg-warm h-100">
-                        <p class="card-text text-secondary small mb-4">
-                            "Giao diện đẹp, dễ tìm kiếm và hình ảnh món ăn rất truyền cảm hứng. Một trang web không thể thiếu cho hội yêu bếp!"
-                        </p>
-                        <div class="d-flex align-items-center gap-3 mt-auto">
-                            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100" class="rounded-circle" width="40" height="40" alt="Avatar">
-                            <div>
-                                <h6 class="fw-bold mb-0 text-dark small">Lê Ngọc Anh</h6>
-                                <small class="text-muted extra-small">Đà Nẵng, Việt Nam</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA NEWSLETTER -->
-    <section class="py-5 bg-warm">
-        <div class="container">
-            <div class="bg-terracotta text-white rounded-5 p-4 p-md-5">
-                <div class="row align-items-center g-4">
-                    <div class="col-lg-7">
-                        <span class="text-uppercase tracking-wider small opacity-75">BẢN TIN BẾP NHÀ MỖI TUẦN</span>
-                        <h3 class="font-serif fw-bold mt-1 mb-2">Nhen nhóm lửa hồng cho căn bếp nhà bạn cùng chúng tôi</h3>
-                        <p class="mb-0 opacity-90 small">Nhận ngay 5 công thức món ăn ngon chuẩn vị mỗi tuần gửi trực tiếp vào hòm thư của bạn.</p>
-                    </div>
-                    <div class="col-lg-5">
-                        <form class="d-flex flex-column gap-2" data-newsletter-form>
-                            <input type="email" class="form-control rounded-pill px-4 border-0 py-2" placeholder="Nhập địa chỉ email của bạn...">
-                            <button type="button" class="btn btn-dark rounded-pill px-4 py-2 fw-semibold">Đăng ký nhận bản tin ngay</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FOOTER -->
     <footer class="bg-dark-footer text-light py-5">
         <div class="container">
             <div class="row g-4 mb-4">
@@ -388,7 +88,6 @@
         </div>
     </footer>
 
-    <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 

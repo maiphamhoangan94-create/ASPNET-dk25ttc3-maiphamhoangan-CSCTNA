@@ -4,13 +4,22 @@
     ViewData["Title"] = "Đăng nhập";
 }
 
-<div class="row justify-content-center mt-5">
-    <div class="col-md-5">
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white text-center">
-                <h3>ĐĂNG NHẬP</h3>
+<section class="auth-section bg-warm py-5">
+    <div class="container py-4">
+        <div class="row justify-content-center align-items-stretch g-4">
+            <div class="col-lg-5 d-none d-lg-block">
+                <div class="auth-visual h-100 rounded-5 overflow-hidden shadow">
+                    <img src="https://images.unsplash.com/photo-1556911220-bff31c812dba?q=80&w=900" class="h-100 w-100 object-fit-cover" alt="Gian bếp gia đình">
+                </div>
             </div>
-            <div class="card-body">
+            <div class="col-lg-5 col-md-8">
+                <div class="auth-card bg-white rounded-5 shadow-sm p-4 p-md-5 h-100">
+                    <div class="mb-4">
+                        <span class="text-uppercase tracking-wider text-muted small fw-semibold">CHÀO MỪNG TRỞ LẠI</span>
+                        <h1 class="font-serif fw-bold text-dark mt-2 mb-2">Đăng nhập vào Bếp Nhà</h1>
+                        <p class="text-secondary small mb-0">Tiếp tục lưu giữ công thức, chia sẻ món ngon và truyền cảm hứng cho gian bếp của bạn.</p>
+                    </div>
+
                 @if (TempData["LoginMessage"] != null)
                 {
                     <div class="alert alert-warning" role="alert">
@@ -25,13 +34,13 @@
 
                     <div class="mb-3">
                         <label asp-for="UsernameOrEmail" class="form-label"></label>
-                        <input asp-for="UsernameOrEmail" class="form-control" placeholder="Nhập tên đăng nhập hoặc email..." />
+                        <input asp-for="UsernameOrEmail" class="form-control auth-input" placeholder="Nhập tên đăng nhập hoặc email..." />
                         <span asp-validation-for="UsernameOrEmail" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
                         <label asp-for="Password" class="form-label"></label>
-                        <input asp-for="Password" class="form-control" placeholder="Nhập mật khẩu..." />
+                        <input asp-for="Password" class="form-control auth-input" placeholder="Nhập mật khẩu..." />
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
 
@@ -41,16 +50,18 @@
                     </div>
 
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary">Đăng nhập</button>
+                        <button type="submit" class="btn btn-terracotta rounded-pill py-2 fw-semibold">Đăng nhập</button>
                     </div>
                 </form>
-            </div>
-            <div class="card-footer text-center">
-                <small>Chưa có tài khoản? <a asp-action="Register">Đăng ký ngay</a></small>
+
+                    <div class="text-center mt-4 pt-3 border-top">
+                        <small class="text-muted">Chưa có tài khoản? <a asp-action="Register" class="text-terracotta fw-semibold text-decoration-none">Đăng ký ngay</a></small>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 
 @section Scripts {
     @{

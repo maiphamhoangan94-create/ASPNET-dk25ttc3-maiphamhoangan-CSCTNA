@@ -1,0 +1,108 @@
+@model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.Post
+
+@{
+    ViewData["Title"] = Model.Title;
+
+    var recipeImage = string.IsNullOrWhiteSpace(Model.ImageUrl)
+        ? "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1200"
+        : Model.ImageUrl;
+
+    var provinces = Model.PostProvinces
+        .Select(postProvince => postProvince.Province?.Name)
+        .Where(provinceName => !string.IsNullOrWhiteSpace(provinceName))
+        .ToList();
+
+    var authorName = Model.User?.FullName ?? Model.User?.Username ?? "Thành viên Bếp Nhà";
+    var contentParagraphs = (Model.Content ?? string.Empty)
+        .Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries)
+        .Select(paragraph => paragraph.Trim())
+        .Where(paragraph => !string.IsNullOrWhiteSpace(paragraph))
+        .ToList();
+}
+
+<section class="recipe-detail-hero bg-warm">
+    <div class="container py-5">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <a asp-controller="Home" asp-action="Index" class="text-terracotta text-decoration-none fw-semibold small d-inline-flex align-items-center gap-2 mb-4">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Quay về trang chủ
+                </a>
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                    <span class="badge bg-terracotta-light text-terracotta border px-3 py-2 rounded-pill">
+                        @(Model.Category?.Name ?? "Công thức")
+                    </span>
+                </div>
+                <h1 class="font-serif display-5 fw-bold text-dark mb-3">@Model.Title</h1>
+                <p class="text-secondary fs-5 mb-4">
+                    Một công thức được chia sẻ từ gian bếp cộng đồng Bếp Nhà, giữ trọn tinh thần món ngon gia đình và hương vị địa phương.
+                </p>
+                <div class="d-flex flex-wrap align-items-center gap-4 text-muted small">
+                    <span><i class="fa-regular fa-user me-2 text-terracotta"></i>@authorName</span>
+                    <span><i class="fa-regular fa-calendar me-2 text-terracotta"></i>@Model.CreatedAt.ToString("dd/MM/yyyy")</span>
+                    <span><i class="fa-solid fa-bowl-food me-2 text-terracotta"></i>Dễ nấu tại nhà</span>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="recipe-detail-photo shadow-lg">
+                    <img src="@recipeImage" alt="@Model.Title" class="img-fluid w-100 h-100 object-fit-cover">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-white">
+    <div class="container py-4">
+        <div class="row g-5">
+            <div class="col-lg-8">
+                <article class="recipe-content">
+                    <span class="text-uppercase tracking-wider text-muted small fw-semibold">CÁCH LÀM & GHI CHÚ</span>
+                    <h2 class="font-serif fw-bold text-dark mt-1 mb-4">Nội dung công thức</h2>
+
+                    @if (contentParagraphs.Any())
+                    {
+                        foreach (var paragraph in contentParagraphs)
+                        {
+                            <p>@paragraph</p>
+                        }
+                    }
+                    else
+                    {
+                        <div class="bg-warm rounded-4 p-4">
+                            <h3 class="h5 fw-bold text-dark mb-2">Công thức đang được cập nhật</h3>
+                            <p class="text-secondary mb-0">Tác giả chưa bổ sung phần mô tả chi tiết. Bạn có thể quay lại sau để xem hướng dẫn đầy đủ hơn.</p>
+                        </div>
+                    }
+                </article>
+            </div>
+            <aside class="col-lg-4">
+                <div class="recipe-detail-panel bg-warm rounded-4 p-4">
+                    <h3 class="h5 fw-bold text-dark mb-3">Thông tin món ăn</h3>
+                    <div class="recipe-fact">
+                        <span>Danh mục</span>
+                        <strong>@(Model.Category?.Name ?? "Công thức")</strong>
+                    </div>
+                    <div class="recipe-fact">
+                        <span>Người chia sẻ</span>
+                        <strong>@authorName</strong>
+                    </div>
+                    <div class="recipe-fact">
+                        <span>Ngày đăng</span>
+                        <strong>@Model.CreatedAt.ToString("dd/MM/yyyy")</strong>
+                    </div>
+                    @if (provinces.Any())
+                    {
+                        <div class="recipe-fact align-items-start">
+                            <span>Tỉnh thành</span>
+                            <strong class="text-end">@string.Join(", ", provinces)</strong>
+                        </div>
+                    }
+                    <a asp-controller="Recipes" asp-action="Create" class="btn btn-terracotta rounded-pill w-100 mt-4 py-2">
+                        Chia sẻ công thức của bạn
+                    </a>
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>

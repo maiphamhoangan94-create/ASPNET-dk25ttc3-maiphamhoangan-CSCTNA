@@ -16,7 +16,14 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
 
         public async Task<IActionResult> Index()
         {
+            var tasteCategories = await _context.Categories
+                .AsNoTracking()
+                .OrderBy(category => category.Name)
+                .Take(5)
+                .ToListAsync();
+
             var approvedPosts = await _context.Posts
+                .AsNoTracking()
                 .Include(post => post.Category)
                 .Include(post => post.User)
                 .Include(post => post.PostProvinces)
@@ -25,6 +32,8 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
                 .OrderByDescending(post => post.CreatedAt)
                 .Take(8)
                 .ToListAsync();
+
+            ViewBag.TasteCategories = tasteCategories;
 
             return View(approvedPosts);
         }

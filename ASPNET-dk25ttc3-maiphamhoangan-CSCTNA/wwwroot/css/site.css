@@ -1,5 +1,5 @@
 :root {
-    --app-font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+    --app-font-family: "Afacad", Arial, Helvetica, sans-serif;
     --bg-warm: #FBF7F2;
     --terracotta: #C85A3B;
     --terracotta-hover: #B04A2D;
@@ -115,6 +115,78 @@ textarea {
 .recipe-img {
     height: 160px;
     object-fit: cover;
+}
+
+.recipe-detail-hero {
+    border-bottom: 1px solid rgba(200, 90, 59, 0.12);
+}
+
+.recipe-detail-photo {
+    height: min(520px, 70vh);
+    overflow: hidden;
+    border-radius: 28px;
+}
+
+.recipe-content {
+    color: #443d39;
+    font-size: 1.06rem;
+    line-height: 1.85;
+}
+
+.recipe-content p {
+    margin-bottom: 1.2rem;
+}
+
+.recipe-detail-panel {
+    position: sticky;
+    top: 105px;
+    border: 1px solid rgba(200, 90, 59, 0.12);
+}
+
+.recipe-fact {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid rgba(68, 61, 57, 0.1);
+}
+
+.recipe-fact span {
+    color: #7a706a;
+}
+
+.recipe-fact strong {
+    color: #2f2a27;
+    font-weight: 700;
+}
+
+.auth-section {
+    min-height: calc(100vh - 92px);
+}
+
+.auth-card {
+    border: 1px solid rgba(200, 90, 59, 0.12);
+}
+
+.auth-card .form-label {
+    color: #3f3834;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.auth-input {
+    border-color: #E8DED6;
+    border-radius: 999px;
+    padding: 0.7rem 1rem;
+}
+
+.auth-input:focus {
+    border-color: var(--terracotta);
+    box-shadow: 0 0 0 0.2rem rgba(200, 90, 59, 0.14);
+}
+
+.auth-visual {
+    min-height: 560px;
 }
 
 @media (min-width: 992px) {

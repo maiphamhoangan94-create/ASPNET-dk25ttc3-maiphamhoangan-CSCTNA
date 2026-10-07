@@ -15,6 +15,25 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> Details(int id)
+        {
+            var recipe = await _context.Posts
+                .AsNoTracking()
+                .Include(post => post.Category)
+                .Include(post => post.User)
+                .Include(post => post.PostProvinces)
+                    .ThenInclude(postProvince => postProvince.Province)
+                .FirstOrDefaultAsync(post => post.Id == id && post.Status == 1);
+
+            if (recipe == null)
+            {
+                return NotFound();
+            }
+
+            return View(recipe);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> Create()
         {
             if (!IsLoggedIn())
