@@ -40,7 +40,8 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
                 Email = duLieuDangKy.Email,
                 Password = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(duLieuDangKy.Password)),
                 FullName = duLieuDangKy.FullName,
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.Now,
+                Role = "User"
             };
 
             _context.Users.Add(nguoiDungMoi);

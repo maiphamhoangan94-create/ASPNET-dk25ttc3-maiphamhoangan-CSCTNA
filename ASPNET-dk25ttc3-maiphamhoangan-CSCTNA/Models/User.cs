@@ -14,6 +14,7 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models
         public string Password { get; set; }
         public string FullName { get; set; }
         public DateTime? CreatedAt { get; set; }
-        public string Role { get; set; }
+        public string Role { get; set; } = "User";
+        public virtual ICollection<PostComment> Comments { get; set; } = new List<PostComment>();
     }
 }

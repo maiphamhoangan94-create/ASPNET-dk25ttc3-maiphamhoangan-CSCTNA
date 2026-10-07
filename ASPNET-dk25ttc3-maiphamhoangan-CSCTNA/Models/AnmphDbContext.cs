@@ -20,9 +20,28 @@ public partial class AnmphDbContext : DbContext
     public DbSet<Post> Posts { get; set; }
     public DbSet<Province> Provinces { get; set; }
     public DbSet<PostProvince> PostProvinces { get; set; }
+    public DbSet<PostComment> PostComments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder trinhTaoModel)
     {
+        trinhTaoModel.Entity<PostComment>()
+            .HasOne(comment => comment.Post)
+            .WithMany(post => post.Comments)
+            .HasForeignKey(comment => comment.PostId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        trinhTaoModel.Entity<PostComment>()
+            .HasOne(comment => comment.User)
+            .WithMany(user => user.Comments)
+            .HasForeignKey(comment => comment.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        trinhTaoModel.Entity<PostComment>()
+            .HasOne(comment => comment.ParentComment)
+            .WithMany(comment => comment.Replies)
+            .HasForeignKey(comment => comment.ParentCommentId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         trinhTaoModel.Entity<PostProvince>()
             .HasKey(postProvince => new { postProvince.PostId, postProvince.ProvinceId });
 

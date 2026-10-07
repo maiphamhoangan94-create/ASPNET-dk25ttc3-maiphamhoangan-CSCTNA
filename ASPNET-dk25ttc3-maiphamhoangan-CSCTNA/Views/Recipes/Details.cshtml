@@ -18,6 +18,11 @@
         .Select(paragraph => paragraph.Trim())
         .Where(paragraph => !string.IsNullOrWhiteSpace(paragraph))
         .ToList();
+
+    var rootComments = Model.Comments
+        .Where(comment => comment.ParentCommentId == null)
+        .OrderByDescending(comment => comment.CreatedAt)
+        .ToList();
 }
 
 <section class="recipe-detail-hero bg-warm">
@@ -75,6 +80,117 @@
                         </div>
                     }
                 </article>
+
+                <section class="recipe-comments mt-5 pt-4 border-top">
+                    <div class="d-flex align-items-center justify-content-between gap-3 mb-4">
+                        <div>
+                            <span class="text-uppercase tracking-wider text-muted small fw-semibold">TRAO ĐỔI</span>
+                            <h2 class="font-serif fw-bold text-dark mt-1 mb-0">Bình luận</h2>
+                        </div>
+                        <span class="badge bg-terracotta-light text-terracotta border rounded-pill px-3 py-2">
+                            @Model.Comments.Count bình luận
+                        </span>
+                    </div>
+
+                    @if (TempData["CommentSuccess"] != null)
+                    {
+                        <div class="alert alert-success rounded-4 border-0">@TempData["CommentSuccess"]</div>
+                    }
+
+                    @if (TempData["CommentError"] != null)
+                    {
+                        <div class="alert alert-danger rounded-4 border-0">@TempData["CommentError"]</div>
+                    }
+
+                    @if (Context.Session.GetInt32("UserId") != null)
+                    {
+                        <form asp-controller="Recipes" asp-action="AddComment" method="post" class="comment-form bg-warm rounded-4 p-4 mb-4">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="postId" value="@Model.Id" />
+                            <label for="commentContent" class="form-label fw-semibold text-dark">Chia sẻ cảm nhận của bạn</label>
+                            <textarea id="commentContent" name="content" class="form-control comment-input" rows="4" maxlength="1000" required placeholder="Bạn đã thử nấu món này chưa?"></textarea>
+                            <div class="d-flex justify-content-end mt-3">
+                                <button type="submit" class="btn btn-terracotta rounded-pill px-4">
+                                    Gửi bình luận
+                                </button>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="bg-warm rounded-4 p-4 mb-4">
+                            <p class="text-secondary mb-3">Đăng nhập để tham gia bình luận về công thức này.</p>
+                            <a asp-controller="Account" asp-action="Login" class="btn btn-terracotta rounded-pill px-4">Đăng nhập</a>
+                        </div>
+                    }
+
+                    @if (rootComments.Any())
+                    {
+                        <div class="vstack gap-3">
+                            @foreach (var comment in rootComments)
+                            {
+                                var commentAuthor = comment.User?.FullName ?? comment.User?.Username ?? "Thành viên Bếp Nhà";
+                                var replies = Model.Comments
+                                    .Where(reply => reply.ParentCommentId == comment.Id)
+                                    .OrderBy(reply => reply.CreatedAt)
+                                    .ToList();
+
+                                <article class="comment-item rounded-4 p-4">
+                                    <div class="d-flex justify-content-between gap-3 mb-2">
+                                        <strong class="text-dark">@commentAuthor</strong>
+                                        <span class="text-muted small">@comment.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                                    </div>
+                                    <p class="text-secondary mb-3">@comment.Content</p>
+
+                                    @if (Context.Session.GetInt32("UserId") != null)
+                                    {
+                                        <button class="btn btn-link comment-reply-toggle p-0 mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#replyForm-@comment.Id" aria-expanded="false" aria-controls="replyForm-@comment.Id">
+                                            Trả lời
+                                        </button>
+
+                                        <div class="collapse mb-3" id="replyForm-@comment.Id">
+                                            <form asp-controller="Recipes" asp-action="AddComment" method="post" class="reply-form bg-warm rounded-4 p-3">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="postId" value="@Model.Id" />
+                                                <input type="hidden" name="parentCommentId" value="@comment.Id" />
+                                                <label for="replyContent-@comment.Id" class="form-label fw-semibold text-dark">Phản hồi @commentAuthor</label>
+                                                <textarea id="replyContent-@comment.Id" name="content" class="form-control comment-input" rows="3" maxlength="1000" required placeholder="Viết phản hồi của bạn..."></textarea>
+                                                <div class="d-flex justify-content-end mt-3">
+                                                    <button type="submit" class="btn btn-terracotta rounded-pill px-4">Gửi phản hồi</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    }
+
+                                    @if (replies.Any())
+                                    {
+                                        <div class="comment-replies vstack gap-2 mt-3">
+                                            @foreach (var reply in replies)
+                                            {
+                                                var replyAuthor = reply.User?.FullName ?? reply.User?.Username ?? "Thành viên Bếp Nhà";
+
+                                                <div class="comment-reply rounded-4 p-3">
+                                                    <div class="d-flex justify-content-between gap-3 mb-2">
+                                                        <strong class="text-dark">@replyAuthor</strong>
+                                                        <span class="text-muted small">@reply.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                                                    </div>
+                                                    <p class="text-secondary mb-0">@reply.Content</p>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                </article>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="comment-empty rounded-4 p-4 text-center">
+                            <h3 class="h5 fw-bold text-dark mb-2">Chưa có bình luận nào</h3>
+                            <p class="text-secondary mb-0">Hãy là người đầu tiên chia sẻ cảm nhận về công thức này.</p>
+                        </div>
+                    }
+                </section>
             </div>
             <aside class="col-lg-4">
                 <div class="recipe-detail-panel bg-warm rounded-4 p-4">

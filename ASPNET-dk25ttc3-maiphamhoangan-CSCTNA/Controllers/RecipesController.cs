@@ -23,6 +23,8 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
                 .Include(post => post.User)
                 .Include(post => post.PostProvinces)
                     .ThenInclude(postProvince => postProvince.Province)
+                .Include(post => post.Comments.OrderBy(comment => comment.CreatedAt))
+                    .ThenInclude(comment => comment.User)
                 .FirstOrDefaultAsync(post => post.Id == id && post.Status == 1);
 
             if (recipe == null)
@@ -31,6 +33,73 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
             }
 
             return View(recipe);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddComment(int postId, string content, int? parentCommentId)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                TempData["LoginMessage"] = "Vui lòng đăng nhập để bình luận.";
+                return RedirectToAction("Login", "Account");
+            }
+
+            var recipeExists = await _context.Posts
+                .AnyAsync(post => post.Id == postId && post.Status == 1);
+
+            if (!recipeExists)
+            {
+                return NotFound();
+            }
+
+            content = (content ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                TempData["CommentError"] = "Vui lòng nhập nội dung bình luận.";
+                return RedirectToAction(nameof(Details), new { id = postId });
+            }
+
+            if (content.Length > 1000)
+            {
+                TempData["CommentError"] = "Bình luận không vượt quá 1000 ký tự.";
+                return RedirectToAction(nameof(Details), new { id = postId });
+            }
+
+            if (parentCommentId.HasValue)
+            {
+                var parentComment = await _context.PostComments
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(comment => comment.Id == parentCommentId.Value && comment.PostId == postId);
+
+                if (parentComment == null)
+                {
+                    TempData["CommentError"] = "Bình luận bạn muốn trả lời không tồn tại.";
+                    return RedirectToAction(nameof(Details), new { id = postId });
+                }
+
+                if (parentComment.ParentCommentId.HasValue)
+                {
+                    parentCommentId = parentComment.ParentCommentId;
+                }
+            }
+
+            _context.PostComments.Add(new PostComment
+            {
+                PostId = postId,
+                UserId = userId.Value,
+                ParentCommentId = parentCommentId,
+                Content = content,
+                CreatedAt = DateTime.Now
+            });
+
+            await _context.SaveChangesAsync();
+            TempData["CommentSuccess"] = parentCommentId.HasValue
+                ? "Đã gửi phản hồi của bạn."
+                : "Đã gửi bình luận của bạn.";
+
+            return RedirectToAction(nameof(Details), new { id = postId });
         }
 
         [HttpGet]
