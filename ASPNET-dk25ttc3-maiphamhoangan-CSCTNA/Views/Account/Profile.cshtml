@@ -1,0 +1,147 @@
+@model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.ProfileViewModel
+
+@{
+    ViewData["Title"] = Model.IsOwner ? "Trang cá nhân của tôi" : $"Trang cá nhân {Model.User.FullName}";
+    const string fallbackImage = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600";
+    var roundedAverage = (int)Math.Round(Model.AverageRating);
+}
+
+<section class="profile-hero bg-warm py-5">
+    <div class="container py-4">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-7">
+                <span class="text-uppercase tracking-wider text-muted small fw-semibold">
+                    @(Model.IsOwner ? "TRANG CÁ NHÂN CỦA BẠN" : "THÀNH VIÊN BẾP NHÀ")
+                </span>
+                <h1 class="font-serif display-5 fw-bold text-dark mt-2 mb-3">
+                    @Model.User.FullName
+                </h1>
+                <div class="d-flex flex-wrap gap-3 text-muted">
+                    <span><i class="fa-regular fa-user me-2 text-terracotta"></i>@Model.User.Username</span>
+                    <span><i class="fa-regular fa-envelope me-2 text-terracotta"></i>@Model.User.Email</span>
+                    @if (Model.User.CreatedAt.HasValue)
+                    {
+                        <span><i class="fa-regular fa-calendar me-2 text-terracotta"></i>Tham gia @Model.User.CreatedAt.Value.ToString("dd/MM/yyyy")</span>
+                    }
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="profile-summary">
+                    <div class="profile-summary-inner">
+                        <div class="d-flex align-items-baseline gap-3 mb-3">
+                            <h2 class="profile-summary-title mb-0">Số hoạt động</h2>
+                            <span class="profile-summary-subtitle">của thành viên</span>
+                        </div>
+
+                        <div class="profile-rating-row">
+                            <div class="profile-score">
+                                <strong>@Model.AverageRating.ToString("0.0")</strong>
+                                <span>/5</span>
+                            </div>
+                            <div>
+                                <div class="profile-stars" aria-label="Điểm trung bình @Model.AverageRating.ToString("0.0") trên 5">
+                                    @for (var star = 1; star <= 5; star++)
+                                    {
+                                        <i class="fa-@(star <= roundedAverage ? "solid" : "regular") fa-star"></i>
+                                    }
+                                </div>
+                                <p class="profile-rating-note mb-0">Điểm trung bình các món đã chia sẻ</p>
+                            </div>
+                        </div>
+
+                        <div class="profile-stat-lines">
+                            <div class="profile-stat-line">
+                                <span>Công thức đã đăng</span>
+                                <i></i>
+                                <strong>@Model.TotalPosts</strong>
+                                <small>bài</small>
+                            </div>
+                            <div class="profile-stat-line">
+                                <span>Bình luận</span>
+                                <i></i>
+                                <strong>@Model.TotalComments</strong>
+                                <small>lượt</small>
+                            </div>
+                            <div class="profile-stat-line">
+                                <span>Đánh giá đã gửi</span>
+                                <i></i>
+                                <strong>@Model.TotalRatings</strong>
+                                <small>lượt</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-white">
+    <div class="container py-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+            <div>
+                <span class="text-uppercase tracking-wider text-muted small fw-semibold">BÀI ĐĂNG</span>
+                <h2 class="font-serif fw-bold text-dark mt-1 mb-0">Công thức đã chia sẻ</h2>
+            </div>
+            @if (Model.IsOwner)
+            {
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="badge rounded-pill bg-success-subtle text-success-emphasis px-3 py-2">@Model.ApprovedPosts đã duyệt</span>
+                    <span class="badge rounded-pill bg-warning-subtle text-warning-emphasis px-3 py-2">@Model.PendingPosts chờ duyệt</span>
+                    <span class="badge rounded-pill bg-danger-subtle text-danger-emphasis px-3 py-2">@Model.RejectedPosts từ chối</span>
+                </div>
+            }
+        </div>
+
+        @if (Model.Posts.Any())
+        {
+            <div class="row g-4">
+                @foreach (var item in Model.Posts)
+                {
+                    var post = item.Post;
+                    <div class="col-md-6 col-lg-4">
+                        <article class="card card-recipe h-100 border-0 rounded-4 shadow-sm overflow-hidden">
+                            @if (post.Status == 1)
+                            {
+                                <a asp-controller="Recipes" asp-action="Details" asp-route-id="@post.Id" class="text-decoration-none d-flex flex-column h-100">
+                                    <img src="@(string.IsNullOrWhiteSpace(post.ImageUrl) ? fallbackImage : post.ImageUrl)" class="card-img-top recipe-img" alt="@post.Title">
+                                    <div class="card-body p-3 d-flex flex-column">
+                                        <partial name="_ProfilePostCardBody" model="item" />
+                                    </div>
+                                </a>
+                            }
+                            else
+                            {
+                                <img src="@(string.IsNullOrWhiteSpace(post.ImageUrl) ? fallbackImage : post.ImageUrl)" class="card-img-top recipe-img" alt="@post.Title">
+                                <div class="card-body p-3 d-flex flex-column">
+                                    <partial name="_ProfilePostCardBody" model="item" />
+                                </div>
+                            }
+                            @if (post.Status == 2 && !string.IsNullOrWhiteSpace(post.RejectionReason))
+                            {
+                                <div class="card-footer bg-white border-0 pt-0 px-3 pb-3">
+                                    <div class="profile-rejection rounded-3 p-3 small">
+                                        <strong>Lý do từ chối:</strong> @post.RejectionReason
+                                    </div>
+                                </div>
+                            }
+                        </article>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="recipe-empty rounded-4 p-4 p-md-5 text-center">
+                <h3 class="h4 fw-bold text-dark">Chưa có bài đăng nào</h3>
+                <p class="text-secondary mb-3">
+                    @(Model.IsOwner ? "Bạn chưa gửi công thức nào. Hãy chia sẻ món ngon đầu tiên của mình." : "Thành viên này chưa có công thức đã được duyệt.")
+                </p>
+                @if (Model.IsOwner)
+                {
+                    <a asp-controller="Recipes" asp-action="Create" class="btn btn-terracotta rounded-pill px-4">Tạo công thức</a>
+                }
+            </div>
+        }
+    </div>
+</section>

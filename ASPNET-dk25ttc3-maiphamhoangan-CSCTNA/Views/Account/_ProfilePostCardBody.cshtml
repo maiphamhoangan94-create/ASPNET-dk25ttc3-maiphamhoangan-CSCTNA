@@ -1,0 +1,53 @@
+@model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.ProfilePostViewModel
+
+@{
+    var post = Model.Post;
+    var provinces = post.PostProvinces
+        .Select(postProvince => postProvince.Province?.Name)
+        .Where(provinceName => !string.IsNullOrWhiteSpace(provinceName))
+        .ToList();
+    var provinceDisplay = provinces.Count >= 3
+        ? string.Join(", ", provinces.Take(2)) + ", ..."
+        : string.Join(", ", provinces);
+
+    string statusText = post.Status switch
+    {
+        0 => "Chờ duyệt",
+        1 => "Đã duyệt",
+        2 => "Từ chối",
+        _ => "Không rõ"
+    };
+
+    string statusClass = post.Status switch
+    {
+        0 => "bg-warning-subtle text-warning-emphasis",
+        1 => "bg-success-subtle text-success-emphasis",
+        2 => "bg-danger-subtle text-danger-emphasis",
+        _ => "bg-light text-muted"
+    };
+}
+
+<div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+    <span class="badge bg-light text-terracotta border d-inline-flex align-items-center gap-1">
+        @if (!string.IsNullOrWhiteSpace(post.Category?.ImageUrl))
+        {
+            <img src="@post.Category.ImageUrl" alt="@post.Category.Name" class="rounded-circle object-fit-cover" style="width: 18px; height: 18px;" />
+        }
+        @(post.Category?.Name ?? "Công thức")
+    </span>
+    <span class="badge @statusClass rounded-pill">@statusText</span>
+</div>
+<h3 class="h6 card-title fw-bold text-dark mb-2">@post.Title</h3>
+@if (provinces.Any())
+{
+    <div class="text-muted extra-small mb-2" title="@string.Join(", ", provinces)">
+        <i class="fa-solid fa-location-dot me-1"></i>@provinceDisplay
+    </div>
+}
+<div class="d-flex justify-content-between text-muted extra-small mt-auto">
+    <span><i class="fa-regular fa-comment me-1"></i>@Model.CommentCount bình luận</span>
+    <span><i class="fa-solid fa-star me-1"></i>@(Model.RatingCount > 0 ? Model.AverageRating.ToString("0.0") : "0.0")</span>
+</div>
+<div class="text-muted extra-small mt-2">
+    <i class="fa-regular fa-calendar me-1"></i>@post.CreatedAt.ToString("dd/MM/yyyy")
+</div>

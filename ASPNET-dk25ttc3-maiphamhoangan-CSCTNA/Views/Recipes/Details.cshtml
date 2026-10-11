@@ -50,7 +50,10 @@
                     Một công thức được chia sẻ từ gian bếp cộng đồng Bếp Nhà, giữ trọn tinh thần món ngon gia đình và hương vị địa phương.
                 </p>
                 <div class="d-flex flex-wrap align-items-center gap-4 text-muted small">
-                    <span><i class="fa-regular fa-user me-2 text-terracotta"></i>@authorName</span>
+                    <span>
+                        <i class="fa-regular fa-user me-2 text-terracotta"></i>
+                        <a asp-controller="Account" asp-action="Profile" asp-route-id="@Model.UserId" class="text-muted text-decoration-none">@authorName</a>
+                    </span>
                     <span><i class="fa-regular fa-calendar me-2 text-terracotta"></i>@Model.CreatedAt.ToString("dd/MM/yyyy")</span>
                     <span><i class="fa-solid fa-star me-2 text-terracotta"></i>@(averageRating > 0 ? averageRating.ToString("0.0") : "Chưa có") sao</span>
                     <span><i class="fa-solid fa-bowl-food me-2 text-terracotta"></i>Dễ nấu tại nhà</span>
@@ -205,7 +208,9 @@
 
                                 <article class="comment-item rounded-4 p-4">
                                     <div class="d-flex justify-content-between gap-3 mb-2">
-                                        <strong class="text-dark">@commentAuthor</strong>
+                                        <strong>
+                                            <a asp-controller="Account" asp-action="Profile" asp-route-id="@comment.UserId" class="text-dark text-decoration-none">@commentAuthor</a>
+                                        </strong>
                                         <span class="text-muted small">@comment.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
                                     </div>
                                     <p class="text-secondary mb-3">@comment.Content</p>
@@ -239,7 +244,9 @@
 
                                                 <div class="comment-reply rounded-4 p-3">
                                                     <div class="d-flex justify-content-between gap-3 mb-2">
-                                                        <strong class="text-dark">@replyAuthor</strong>
+                                                        <strong>
+                                                            <a asp-controller="Account" asp-action="Profile" asp-route-id="@reply.UserId" class="text-dark text-decoration-none">@replyAuthor</a>
+                                                        </strong>
                                                         <span class="text-muted small">@reply.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
                                                     </div>
                                                     <p class="text-secondary mb-0">@reply.Content</p>
@@ -269,7 +276,9 @@
                     </div>
                     <div class="recipe-fact">
                         <span>Người chia sẻ</span>
-                        <strong>@authorName</strong>
+                        <strong>
+                            <a asp-controller="Account" asp-action="Profile" asp-route-id="@Model.UserId" class="text-dark text-decoration-none">@authorName</a>
+                        </strong>
                     </div>
                     <div class="recipe-fact">
                         <span>Ngày đăng</span>

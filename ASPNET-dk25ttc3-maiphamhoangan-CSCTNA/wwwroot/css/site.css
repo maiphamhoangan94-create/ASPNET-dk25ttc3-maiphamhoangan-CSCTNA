@@ -329,6 +329,120 @@ textarea {
     box-shadow: 0 0 0 0.2rem rgba(200, 90, 59, 0.14);
 }
 
+.profile-hero {
+    border-bottom: 1px solid rgba(200, 90, 59, 0.12);
+}
+
+.profile-summary {
+    border: 1px solid rgba(200, 90, 59, 0.2);
+    border-radius: 24px;
+    background: #FFFDFC;
+    box-shadow: 0 14px 34px rgba(67, 47, 38, 0.06);
+    padding: 0.45rem;
+}
+
+.profile-summary-inner {
+    border: 1px dashed rgba(200, 90, 59, 0.28);
+    border-radius: 20px;
+    padding: 1.7rem 1.9rem;
+}
+
+.profile-summary-title {
+    color: #1F1712;
+    font-size: 1.65rem;
+    font-weight: 800;
+}
+
+.profile-summary-subtitle {
+    color: #8B7D73;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.profile-rating-row {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid rgba(200, 90, 59, 0.22);
+}
+
+.profile-score {
+    display: flex;
+    align-items: baseline;
+    color: var(--terracotta);
+    line-height: 0.9;
+}
+
+.profile-score strong {
+    font-family: var(--app-font-family);
+    font-size: clamp(4rem, 7vw, 5.7rem);
+    font-weight: 700;
+    letter-spacing: 0;
+}
+
+.profile-score span {
+    color: #6D625C;
+    font-size: 1.55rem;
+    margin-left: 0.2rem;
+}
+
+.profile-stars {
+    color: #D89B24;
+    font-size: 0.95rem;
+    letter-spacing: 0;
+}
+
+.profile-rating-note {
+    color: #8B7D73;
+    font-size: 0.95rem;
+    margin-top: 0.35rem;
+}
+
+.profile-stat-lines {
+    padding-top: 1.2rem;
+}
+
+.profile-stat-line {
+    display: flex;
+    align-items: baseline;
+    gap: 0.55rem;
+    color: #1F1712;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-top: 0.85rem;
+}
+
+.profile-stat-line:first-child {
+    margin-top: 0;
+}
+
+.profile-stat-line i {
+    flex: 1 1 auto;
+    min-width: 2rem;
+    border-bottom: 1px dotted rgba(139, 125, 115, 0.55);
+    transform: translateY(-0.25rem);
+}
+
+.profile-stat-line strong {
+    color: #1F1712;
+    font-size: 1.35rem;
+    min-width: 1.4rem;
+    text-align: right;
+}
+
+.profile-stat-line small {
+    color: #8B7D73;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.profile-rejection {
+    border: 1px solid rgba(220, 53, 69, 0.18);
+    background: #FFF5F6;
+    color: #7B2D36;
+}
+
 .auth-section {
     min-height: calc(100vh - 92px);
 }
@@ -362,5 +476,17 @@ textarea {
     .col-lg-2-4 {
         flex: 0 0 auto;
         width: 20%;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .profile-summary-inner {
+        padding: 1.35rem;
+    }
+
+    .profile-rating-row {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.8rem;
     }
 }

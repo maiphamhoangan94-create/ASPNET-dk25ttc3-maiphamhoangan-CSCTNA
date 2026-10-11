@@ -28,7 +28,7 @@
                 <div class="d-flex align-items-center gap-3">
                     @if (Context.Session.GetInt32("UserId") != null)
                     {
-                        <span class="text-muted small">Xin chào, @Context.Session.GetString("Username")</span>
+                        <a asp-controller="Account" asp-action="Profile" class="text-muted text-decoration-none small">Xin chào, @Context.Session.GetString("Username")</a>
                         <a asp-controller="Account" asp-action="Logout" class="text-dark text-decoration-none small">Đăng xuất</a>
                     }
                     else
