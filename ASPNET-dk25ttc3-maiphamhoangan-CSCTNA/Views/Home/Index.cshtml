@@ -75,10 +75,9 @@
                 foreach (var category in tasteCategories)
                 {
                     var categoryImage = string.IsNullOrWhiteSpace(category.ImageUrl) ? categoryFallbackImage : category.ImageUrl;
-                    var categoryLink = string.IsNullOrWhiteSpace(category.Slug) ? $"#category-{category.Id}" : $"#category-{category.Slug}";
 
                     <div class="col-6 col-md-4 col-lg-2-4">
-                        <a href="@categoryLink" class="card card-taste border-0 rounded-4 overflow-hidden text-white shadow-sm h-100 text-decoration-none">
+                        <a asp-controller="Recipes" asp-action="Index" asp-route-categoryId="@category.Id" class="card card-taste border-0 rounded-4 overflow-hidden text-white shadow-sm h-100 text-decoration-none">
                             <img src="@categoryImage" class="card-img h-100 object-fit-cover" alt="@category.Name">
                             <div class="card-img-overlay d-flex align-items-end p-3 bg-dark-gradient">
                                 <h6 class="card-title fw-bold mb-0">@category.Name</h6>

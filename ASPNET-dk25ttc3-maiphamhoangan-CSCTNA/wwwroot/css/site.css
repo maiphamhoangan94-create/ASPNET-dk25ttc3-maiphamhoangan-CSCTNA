@@ -146,6 +146,24 @@ textarea {
     border-bottom: 1px solid rgba(200, 90, 59, 0.12);
 }
 
+.recipe-category-filter {
+    border: 1px solid rgba(200, 90, 59, 0.12);
+    border-radius: 18px;
+    background: #FFFDFC;
+    padding: 1.25rem;
+}
+
+.recipe-category-filter .form-select {
+    border-color: #E8DED6;
+    min-height: 46px;
+    padding: 0.65rem 1rem;
+}
+
+.recipe-category-filter .form-select:focus {
+    border-color: var(--terracotta);
+    box-shadow: 0 0 0 0.2rem rgba(200, 90, 59, 0.14);
+}
+
 .recipe-pagination .page-link {
     border-color: #E8DED6;
     color: var(--terracotta);

@@ -18,12 +18,17 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index(int page = 1)
+        public IActionResult Index(int? categoryId, int page = 1)
         {
             const int pageSize = 8;
             page = Math.Max(page, 1);
 
-            var approvedRecipes = _context.Posts
+            var categories = _context.Categories
+                .AsNoTracking()
+                .OrderBy(category => category.Name)
+                .ToList();
+
+            IQueryable<Post> approvedRecipes = _context.Posts
                 .AsNoTracking()
                 .Include(post => post.Category)
                 .Include(post => post.User)
@@ -31,6 +36,15 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
                     .ThenInclude(postProvince => postProvince.Province)
                 .Where(post => post.Status == 1 && post.PostType == PostTypes.Recipe)
                 .OrderByDescending(post => post.CreatedAt);
+
+            if (categoryId.HasValue && categories.Any(category => category.Id == categoryId.Value))
+            {
+                approvedRecipes = approvedRecipes.Where(post => post.CategoryId == categoryId.Value);
+            }
+            else
+            {
+                categoryId = null;
+            }
 
             var totalRecipes = approvedRecipes.Count();
             var totalPages = Math.Max((int)Math.Ceiling(totalRecipes / (double)pageSize), 1);
@@ -48,6 +62,8 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
             var viewModel = new RecipeListViewModel
             {
                 Recipes = recipes,
+                Categories = categories,
+                SelectedCategoryId = categoryId,
                 CurrentPage = page,
                 TotalPages = totalPages,
                 TotalRecipes = totalRecipes,

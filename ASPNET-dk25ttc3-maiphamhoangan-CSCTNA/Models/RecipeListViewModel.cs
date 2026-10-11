@@ -4,6 +4,10 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models
     {
         public List<Post> Recipes { get; set; } = new();
 
+        public List<Category> Categories { get; set; } = new();
+
+        public int? SelectedCategoryId { get; set; }
+
         public int CurrentPage { get; set; }
 
         public int TotalPages { get; set; }
