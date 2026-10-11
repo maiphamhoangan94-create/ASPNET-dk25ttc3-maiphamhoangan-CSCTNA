@@ -117,6 +117,36 @@ textarea {
     object-fit: cover;
 }
 
+.recipe-list-hero {
+    border-bottom: 1px solid rgba(200, 90, 59, 0.12);
+}
+
+.recipe-pagination .page-link {
+    border-color: #E8DED6;
+    color: var(--terracotta);
+    min-width: 42px;
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.recipe-pagination .page-item.active .page-link {
+    background-color: var(--terracotta);
+    border-color: var(--terracotta);
+    color: #FFFFFF;
+}
+
+.recipe-pagination .page-item.disabled .page-link {
+    color: #B8ADA5;
+}
+
+.recipe-empty {
+    border: 1px dashed rgba(200, 90, 59, 0.28);
+    background: var(--bg-warm);
+}
+
 .province-hero {
     border-bottom: 1px solid rgba(200, 90, 59, 0.12);
 }

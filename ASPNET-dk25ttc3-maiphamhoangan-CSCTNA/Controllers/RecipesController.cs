@@ -15,6 +15,46 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> Index(int page = 1)
+        {
+            const int pageSize = 8;
+            page = Math.Max(page, 1);
+
+            var approvedRecipes = _context.Posts
+                .AsNoTracking()
+                .Include(post => post.Category)
+                .Include(post => post.User)
+                .Include(post => post.PostProvinces)
+                    .ThenInclude(postProvince => postProvince.Province)
+                .Where(post => post.Status == 1)
+                .OrderByDescending(post => post.CreatedAt);
+
+            var totalRecipes = await approvedRecipes.CountAsync();
+            var totalPages = Math.Max((int)Math.Ceiling(totalRecipes / (double)pageSize), 1);
+
+            if (page > totalPages)
+            {
+                page = totalPages;
+            }
+
+            var recipes = await approvedRecipes
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var viewModel = new RecipeListViewModel
+            {
+                Recipes = recipes,
+                CurrentPage = page,
+                TotalPages = totalPages,
+                TotalRecipes = totalRecipes,
+                PageSize = pageSize
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
             var recipe = await _context.Posts

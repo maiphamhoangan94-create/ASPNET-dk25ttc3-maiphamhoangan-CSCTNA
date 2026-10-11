@@ -20,7 +20,7 @@
                     Mỗi món ăn là một câu chuyện, mỗi hương vị là một kỷ niệm. Cùng Bếp Nhà lưu giữ và lan tỏa những bữa ăn ấm áp gia đình Việt.
                 </p>
                 <div class="d-flex flex-wrap gap-3 mb-4">
-                    <a href="#" class="btn btn-terracotta rounded-pill px-4 py-2">Khám phá công thức</a>
+                    <a asp-controller="Recipes" asp-action="Index" class="btn btn-terracotta rounded-pill px-4 py-2">Khám phá công thức</a>
                     <a href="#" class="btn btn-outline-dark rounded-pill px-4 py-2">Tìm kiếm theo vị</a>
                 </div>
                 <div class="d-flex gap-4 text-muted small pt-2">
@@ -102,7 +102,7 @@
                 <span class="text-uppercase tracking-wider text-muted small fw-semibold">GỢI Ý HÔM NAY CHO BẠN</span>
                 <h2 class="font-serif fw-bold text-dark mt-1">Hôm nay Bếp Nhà thèm món gì? Thử ngay công thức được khuyên nấu!</h2>
             </div>
-            <a href="#" class="btn btn-terracotta rounded-pill px-4 d-none d-md-inline">Khám phá tất cả công thức</a>
+            <a asp-controller="Recipes" asp-action="Index" class="btn btn-terracotta rounded-pill px-4 d-none d-md-inline">Khám phá tất cả công thức</a>
         </div>
 
         @if (suggestedPosts.Any())
