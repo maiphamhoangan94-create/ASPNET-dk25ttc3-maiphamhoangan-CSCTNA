@@ -1,0 +1,163 @@
+@model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.AdminReportViewModel
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "Báo cáo";
+
+    var jsonOptions = new JsonSerializerOptions
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
+}
+
+<section class="report-summary-grid">
+    <article class="admin-card report-metric-card">
+        <span>Công thức</span>
+        <strong>@Model.TotalRecipes</strong>
+        <small>@Model.PendingPosts bài đang chờ duyệt</small>
+    </article>
+    <article class="admin-card report-metric-card">
+        <span>Góc bếp</span>
+        <strong>@Model.TotalKitchenCorners</strong>
+        <small>Nội dung chia sẻ cộng đồng</small>
+    </article>
+    <article class="admin-card report-metric-card">
+        <span>Người dùng</span>
+        <strong>@Model.TotalUsers</strong>
+        <small>@Model.TotalCategories danh mục đang quản lý</small>
+    </article>
+    <article class="admin-card report-metric-card">
+        <span>Đánh giá TB</span>
+        <strong>@Model.AverageRating.ToString("0.0")</strong>
+        <small>@Model.TotalRatings lượt đánh giá</small>
+    </article>
+</section>
+
+<section class="report-chart-grid">
+    <article class="admin-card report-chart-card">
+        <div class="admin-card-header">
+            <div>
+                <h2 class="admin-card-title">Bài viết 6 tháng gần đây</h2>
+                <p class="admin-card-subtitle">Theo thời gian tạo nội dung.</p>
+            </div>
+        </div>
+        <div class="admin-card-body report-chart-wrap">
+            <canvas id="monthlyPostsChart"></canvas>
+        </div>
+    </article>
+
+    <article class="admin-card report-chart-card">
+        <div class="admin-card-header">
+            <div>
+                <h2 class="admin-card-title">Trạng thái duyệt</h2>
+                <p class="admin-card-subtitle">Tổng hợp công thức và góc bếp.</p>
+            </div>
+        </div>
+        <div class="admin-card-body report-chart-wrap">
+            <canvas id="postStatusChart"></canvas>
+        </div>
+    </article>
+
+    <article class="admin-card report-chart-card">
+        <div class="admin-card-header">
+            <div>
+                <h2 class="admin-card-title">Công thức theo danh mục</h2>
+                <p class="admin-card-subtitle">Top danh mục có nhiều công thức nhất.</p>
+            </div>
+        </div>
+        <div class="admin-card-body report-chart-wrap">
+            <canvas id="categoryChart"></canvas>
+        </div>
+    </article>
+
+    <article class="admin-card report-chart-card">
+        <div class="admin-card-header">
+            <div>
+                <h2 class="admin-card-title">Tương tác</h2>
+                <p class="admin-card-subtitle">Bình luận, đánh giá và nội dung đã duyệt.</p>
+            </div>
+        </div>
+        <div class="admin-card-body report-chart-wrap">
+            <canvas id="engagementChart"></canvas>
+        </div>
+    </article>
+</section>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const monthlyPosts = @Html.Raw(JsonSerializer.Serialize(Model.MonthlyPosts, jsonOptions));
+        const postsByStatus = @Html.Raw(JsonSerializer.Serialize(Model.PostsByStatus, jsonOptions));
+        const postsByCategory = @Html.Raw(JsonSerializer.Serialize(Model.PostsByCategory, jsonOptions));
+        const engagementSummary = @Html.Raw(JsonSerializer.Serialize(Model.EngagementSummary, jsonOptions));
+
+        const chartColors = ["#1976d2", "#2e7d32", "#f9a825", "#d32f2f", "#6a1b9a", "#00838f"];
+
+        function chartLabels(data) {
+            return data.map(item => item.label);
+        }
+
+        function chartValues(data) {
+            return data.map(item => item.value);
+        }
+
+        new Chart(document.getElementById("monthlyPostsChart"), {
+            type: "line",
+            data: {
+                labels: chartLabels(monthlyPosts),
+                datasets: [{
+                    label: "Bài viết",
+                    data: chartValues(monthlyPosts),
+                    borderColor: "#1976d2",
+                    backgroundColor: "rgba(25, 118, 210, 0.14)",
+                    tension: 0.35,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+            }
+        });
+
+        new Chart(document.getElementById("postStatusChart"), {
+            type: "doughnut",
+            data: {
+                labels: chartLabels(postsByStatus),
+                datasets: [{ data: chartValues(postsByStatus), backgroundColor: ["#f9a825", "#2e7d32", "#d32f2f"] }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+
+        new Chart(document.getElementById("categoryChart"), {
+            type: "bar",
+            data: {
+                labels: chartLabels(postsByCategory),
+                datasets: [{ label: "Công thức", data: chartValues(postsByCategory), backgroundColor: chartColors }]
+            },
+            options: {
+                indexAxis: "y",
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { x: { beginAtZero: true, ticks: { precision: 0 } } }
+            }
+        });
+
+        new Chart(document.getElementById("engagementChart"), {
+            type: "bar",
+            data: {
+                labels: chartLabels(engagementSummary),
+                datasets: [{ label: "Số lượng", data: chartValues(engagementSummary), backgroundColor: ["#00838f", "#6a1b9a", "#2e7d32"] }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+            }
+        });
+    </script>
+}
