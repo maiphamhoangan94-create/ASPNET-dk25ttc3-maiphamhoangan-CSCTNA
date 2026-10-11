@@ -90,6 +90,18 @@ textarea {
         color: #FFFFFF;
     }
 
+.btn-outline-terracotta {
+    color: var(--terracotta);
+    border-color: rgba(200, 90, 59, 0.45);
+    background-color: #FFFFFF;
+}
+
+.btn-outline-terracotta:hover {
+    color: #FFFFFF;
+    border-color: var(--terracotta);
+    background-color: var(--terracotta);
+}
+
 .card-taste {
     height: 180px;
     transition: transform 0.3s ease;
@@ -327,6 +339,66 @@ textarea {
 .comment-input:focus {
     border-color: var(--terracotta);
     box-shadow: 0 0 0 0.2rem rgba(200, 90, 59, 0.14);
+}
+
+.ingredient-entry {
+    border: 1px solid rgba(200, 90, 59, 0.14);
+    background: #FFFDFC;
+}
+
+.ingredient-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(110px, 0.7fr) minmax(0, 1fr) 42px;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.ingredient-row .form-control {
+    border-color: #E8DED6;
+    border-radius: 14px;
+    min-height: 42px;
+}
+
+.ingredient-row .form-control:focus {
+    border-color: var(--terracotta);
+    box-shadow: 0 0 0 0.2rem rgba(200, 90, 59, 0.14);
+}
+
+.ingredient-remove {
+    width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.recipe-ingredients {
+    border: 1px solid rgba(200, 90, 59, 0.14);
+    background: #FFFDFC;
+}
+
+.recipe-ingredients ul {
+    margin: 0;
+    padding-left: 1.2rem;
+}
+
+.recipe-ingredients li {
+    margin-bottom: 0.55rem;
+}
+
+.recipe-ingredients li:last-child {
+    margin-bottom: 0;
+}
+
+@media (max-width: 767.98px) {
+    .ingredient-row {
+        grid-template-columns: 1fr 1fr 42px;
+    }
+
+    .ingredient-row .ingredient-name {
+        grid-column: 1 / -1;
+    }
 }
 
 .kitchen-hero,

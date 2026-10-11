@@ -75,6 +75,10 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models
         public List<int> SelectedProvinceIds { get; set; } = new();
 
         [NotMapped]
+        [Display(Name = "Nguyên liệu")]
+        public string? Ingredients { get; set; }
+
+        [NotMapped]
         public List<string> GalleryImages => (GalleryImageUrls ?? string.Empty)
             .Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries)
             .Select(imageUrl => imageUrl.Trim())

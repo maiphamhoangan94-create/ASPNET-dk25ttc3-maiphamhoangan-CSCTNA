@@ -209,7 +209,7 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Title,Content,ImageUrl,CategoryId,SelectedProvinceIds")] Post recipe)
+        public IActionResult Create([Bind("Title,Ingredients,Content,ImageUrl,CategoryId,SelectedProvinceIds")] Post recipe)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
@@ -244,6 +244,7 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
             recipe.UserId = userId.Value;
             recipe.PostType = PostTypes.Recipe;
             recipe.Status = 0;
+            recipe.Content = BuildRecipeContent(recipe.Ingredients, recipe.Content);
             recipe.CreatedAt = DateTime.Now;
             recipe.UpdatedAt = null;
             recipe.ApprovedBy = null;
@@ -294,6 +295,25 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
 
             _context.PostProvinces.AddRange(postProvinces);
             _context.SaveChanges();
+        }
+
+        private static string BuildRecipeContent(string? ingredients, string? instructions)
+        {
+            var sections = new List<string>();
+            ingredients = (ingredients ?? string.Empty).Trim();
+            instructions = (instructions ?? string.Empty).Trim();
+
+            if (!string.IsNullOrWhiteSpace(ingredients))
+            {
+                sections.Add($"## Nguyên liệu{Environment.NewLine}{ingredients}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(instructions))
+            {
+                sections.Add($"## Cách làm{Environment.NewLine}{instructions}");
+            }
+
+            return string.Join($"{Environment.NewLine}{Environment.NewLine}", sections);
         }
     }
 }

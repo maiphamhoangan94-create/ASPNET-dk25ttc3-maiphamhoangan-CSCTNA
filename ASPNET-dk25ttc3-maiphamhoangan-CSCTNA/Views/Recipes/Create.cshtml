@@ -51,8 +51,32 @@
                     </div>
 
                     <div class="mb-4">
-                        <label asp-for="Content" class="form-label fw-semibold">Nội dung công thức</label>
-                        <textarea asp-for="Content" class="form-control" rows="10" placeholder="Nguyên liệu, cách sơ chế, các bước nấu và mẹo nhỏ của bạn..."></textarea>
+                        <label asp-for="Ingredients" class="form-label fw-semibold">Nguyên liệu</label>
+                        <input type="hidden" asp-for="Ingredients" id="Ingredients" />
+                        <div class="ingredient-entry rounded-4 p-3">
+                            <div id="ingredientRows" class="vstack gap-2">
+                                <div class="ingredient-row">
+                                    <input type="text" class="form-control ingredient-name" placeholder="Tên nguyên liệu" aria-label="Tên nguyên liệu" />
+                                    <input type="text" class="form-control ingredient-amount" placeholder="Lượng" aria-label="Lượng nguyên liệu" />
+                                    <input type="text" class="form-control ingredient-note" placeholder="Ghi chú" aria-label="Ghi chú nguyên liệu" />
+                                    <button type="button" class="btn btn-outline-secondary ingredient-remove" aria-label="Xóa nguyên liệu">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between mt-3">
+                                <button type="button" class="btn btn-outline-terracotta rounded-pill px-3" id="addIngredientRow">
+                                    <i class="fa-solid fa-plus me-1"></i>Thêm nguyên liệu
+                                </button>
+                                <span class="text-muted small">Mỗi dòng sẽ tự chuyển thành một nguyên liệu trong công thức.</span>
+                            </div>
+                        </div>
+                        <span asp-validation-for="Ingredients" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Content" class="form-label fw-semibold">Cách làm và ghi chú</label>
+                        <textarea asp-for="Content" class="form-control" rows="9" placeholder="Ví dụ: Sơ chế cá, ướp 20 phút, kho lửa nhỏ..."></textarea>
                         <span asp-validation-for="Content" class="text-danger small"></span>
                     </div>
 
@@ -68,4 +92,82 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        (() => {
+            const rowsContainer = document.getElementById('ingredientRows');
+            const addButton = document.getElementById('addIngredientRow');
+            const hiddenInput = document.getElementById('Ingredients');
+
+            if (!rowsContainer || !addButton || !hiddenInput) {
+                return;
+            }
+
+            const createRow = () => {
+                const row = document.createElement('div');
+                row.className = 'ingredient-row';
+                row.innerHTML = `
+                    <input type="text" class="form-control ingredient-name" placeholder="Tên nguyên liệu" aria-label="Tên nguyên liệu" />
+                    <input type="text" class="form-control ingredient-amount" placeholder="Lượng" aria-label="Lượng nguyên liệu" />
+                    <input type="text" class="form-control ingredient-note" placeholder="Ghi chú" aria-label="Ghi chú nguyên liệu" />
+                    <button type="button" class="btn btn-outline-secondary ingredient-remove" aria-label="Xóa nguyên liệu">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>`;
+                return row;
+            };
+
+            const syncIngredients = () => {
+                const lines = Array.from(rowsContainer.querySelectorAll('.ingredient-row'))
+                    .map(row => {
+                        const name = row.querySelector('.ingredient-name')?.value.trim() ?? '';
+                        const amount = row.querySelector('.ingredient-amount')?.value.trim() ?? '';
+                        const note = row.querySelector('.ingredient-note')?.value.trim() ?? '';
+
+                        if (!name && !amount && !note) {
+                            return '';
+                        }
+
+                        const main = [name, amount].filter(Boolean).join(' - ');
+                        return note && main ? `${main} (${note})` : (main || note);
+                    })
+                    .filter(Boolean);
+
+                hiddenInput.value = lines.join('\n');
+            };
+
+            addButton.addEventListener('click', () => {
+                const row = createRow();
+                rowsContainer.appendChild(row);
+                row.querySelector('.ingredient-name')?.focus();
+            });
+
+            rowsContainer.addEventListener('input', syncIngredients);
+            rowsContainer.addEventListener('click', event => {
+                const removeButton = event.target.closest('.ingredient-remove');
+                if (!removeButton) {
+                    return;
+                }
+
+                const rows = rowsContainer.querySelectorAll('.ingredient-row');
+                if (rows.length === 1) {
+                    rows[0].querySelectorAll('input').forEach(input => input.value = '');
+                } else {
+                    removeButton.closest('.ingredient-row')?.remove();
+                }
+
+                syncIngredients();
+            });
+
+            const existingLines = hiddenInput.value.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+            if (existingLines.length > 0) {
+                rowsContainer.innerHTML = '';
+                existingLines.forEach(line => {
+                    const row = createRow();
+                    row.querySelector('.ingredient-name').value = line;
+                    rowsContainer.appendChild(row);
+                });
+            }
+
+            document.querySelector('.recipe-submit-form')?.addEventListener('submit', syncIngredients);
+        })();
+    </script>
 }

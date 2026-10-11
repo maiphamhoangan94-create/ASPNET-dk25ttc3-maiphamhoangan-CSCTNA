@@ -20,9 +20,51 @@
     var currentUserRating = currentUserId == null
         ? null
         : Model.Ratings.FirstOrDefault(rating => rating.UserId == currentUserId.Value)?.Score;
-    var contentParagraphs = (Model.Content ?? string.Empty)
+    var rawContent = Model.Content ?? string.Empty;
+    var contentLines = rawContent
+        .Split(new[] { "\r\n", "\n" }, StringSplitOptions.None)
+        .Select(line => line.Trim())
+        .ToList();
+    var ingredientLines = new List<string>();
+    var instructionLines = new List<string>();
+    var currentSection = "instructions";
+
+    foreach (var line in contentLines)
+    {
+        if (line.Equals("## Nguyên liệu", StringComparison.OrdinalIgnoreCase))
+        {
+            currentSection = "ingredients";
+            continue;
+        }
+
+        if (line.Equals("## Cách làm", StringComparison.OrdinalIgnoreCase))
+        {
+            currentSection = "instructions";
+            continue;
+        }
+
+        if (string.IsNullOrWhiteSpace(line))
+        {
+            continue;
+        }
+
+        if (currentSection == "ingredients")
+        {
+            ingredientLines.Add(line);
+        }
+        else
+        {
+            instructionLines.Add(line);
+        }
+    }
+
+    var displayContent = ingredientLines.Any()
+        ? string.Join(Environment.NewLine, instructionLines)
+        : rawContent;
+    var contentParagraphs = displayContent
         .Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries)
         .Select(paragraph => paragraph.Trim())
+        .Where(paragraph => !paragraph.StartsWith("## ", StringComparison.Ordinal))
         .Where(paragraph => !string.IsNullOrWhiteSpace(paragraph))
         .ToList();
 
@@ -73,6 +115,20 @@
         <div class="row g-5">
             <div class="col-lg-8">
                 <article class="recipe-content">
+                    @if (ingredientLines.Any())
+                    {
+                        <section class="recipe-ingredients rounded-4 p-4 mb-5">
+                            <span class="text-uppercase tracking-wider text-muted small fw-semibold">CHUẨN BỊ</span>
+                            <h2 class="font-serif fw-bold text-dark mt-1 mb-3">Nguyên liệu</h2>
+                            <ul>
+                                @foreach (var ingredient in ingredientLines)
+                                {
+                                    <li>@ingredient</li>
+                                }
+                            </ul>
+                        </section>
+                    }
+
                     <span class="text-uppercase tracking-wider text-muted small fw-semibold">CÁCH LÀM & GHI CHÚ</span>
                     <h2 class="font-serif fw-bold text-dark mt-1 mb-4">Nội dung công thức</h2>
 
