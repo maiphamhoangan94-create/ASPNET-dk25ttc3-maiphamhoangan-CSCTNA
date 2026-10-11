@@ -15,32 +15,33 @@ public class PostsController : Controller
     }
 
     // GET: POSTS
-    public async Task<IActionResult> Index()    
+    public IActionResult Index()    
     {
-        return View(await _context.Posts
+        return View(_context.Posts
             .Include(baiViet => baiViet.Category)
             .Include(baiViet => baiViet.User)
             .Include(baiViet => baiViet.PostProvinces)
                 .ThenInclude(postProvince => postProvince.Province)
+            .Where(baiViet => baiViet.PostType == PostTypes.Recipe)
             .OrderByDescending(baiViet => baiViet.CreatedAt)
-            .ToListAsync());
+            .ToList());
     }
 
     // GET: POSTS/Details/5
-    public async Task<IActionResult> Details(int? id)
+    public IActionResult Details(int? id)
     {
         if (id == null)
         {
             return NotFound();
         }
 
-        var baiViet = await _context.Posts
+        var baiViet = _context.Posts
             .Include(dong => dong.Category)
             .Include(dong => dong.User)
             .Include(dong => dong.AdminApprover)
             .Include(dong => dong.PostProvinces)
                 .ThenInclude(postProvince => postProvince.Province)
-            .FirstOrDefaultAsync(dong => dong.Id == id);
+            .FirstOrDefault(dong => dong.Id == id && dong.PostType == PostTypes.Recipe);
         if (baiViet == null)
         {
             return NotFound();
@@ -51,10 +52,10 @@ public class PostsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Approve(int id)
+    public IActionResult Approve(int id)
     {
-        var baiViet = await _context.Posts.FindAsync(id);
-        if (baiViet == null)
+        var baiViet = _context.Posts.Find(id);
+        if (baiViet == null || baiViet.PostType != PostTypes.Recipe)
         {
             return NotFound();
         }
@@ -65,7 +66,7 @@ public class PostsController : Controller
         baiViet.RejectionReason = null;
         baiViet.UpdatedAt = DateTime.Now;
 
-        await _context.SaveChangesAsync();
+        _context.SaveChanges();
         TempData["PostMessage"] = "Bài viết đã được phê duyệt.";
 
         return RedirectToAction(nameof(Index));
@@ -73,10 +74,10 @@ public class PostsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Reject(int id, string? rejectionReason)
+    public IActionResult Reject(int id, string? rejectionReason)
     {
-        var baiViet = await _context.Posts.FindAsync(id);
-        if (baiViet == null)
+        var baiViet = _context.Posts.Find(id);
+        if (baiViet == null || baiViet.PostType != PostTypes.Recipe)
         {
             return NotFound();
         }
@@ -89,16 +90,16 @@ public class PostsController : Controller
             : rejectionReason.Trim();
         baiViet.UpdatedAt = DateTime.Now;
 
-        await _context.SaveChangesAsync();
+        _context.SaveChanges();
         TempData["PostMessage"] = "Bài viết đã bị từ chối.";
 
         return RedirectToAction(nameof(Index));
     }
 
     // GET: POSTS/Create
-    public async Task<IActionResult> Create()
+    public IActionResult Create()
     {
-        await LoadProvincesAsync();
+        LoadProvinces();
         return View();
     }
 
@@ -107,30 +108,31 @@ public class PostsController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,Title,Content,ImageUrl,Status,RejectionReason,CategoryId,Category,UserId,User,ApprovedBy,AdminApprover,ApprovedAt,CreatedAt,UpdatedAt,SelectedProvinceIds")] Post baiViet)
+    public IActionResult Create([Bind("Id,Title,Content,ImageUrl,Status,RejectionReason,CategoryId,Category,UserId,User,ApprovedBy,AdminApprover,ApprovedAt,CreatedAt,UpdatedAt,SelectedProvinceIds")] Post baiViet)
     {
         if (ModelState.IsValid)
         {
+            baiViet.PostType = PostTypes.Recipe;
             _context.Add(baiViet);
-            await _context.SaveChangesAsync();
-            await SavePostProvincesAsync(baiViet.Id, baiViet.SelectedProvinceIds);
+            _context.SaveChanges();
+            SavePostProvinces(baiViet.Id, baiViet.SelectedProvinceIds);
             return RedirectToAction(nameof(Index));
         }
-        await LoadProvincesAsync(baiViet.SelectedProvinceIds);
+        LoadProvinces(baiViet.SelectedProvinceIds);
         return View(baiViet);
     }
 
     // GET: POSTS/Edit/5
-    public async Task<IActionResult> Edit(int? id)
+    public IActionResult Edit(int? id)
     {
         if (id == null)
         {
             return NotFound();
         }
 
-        var baiViet = await _context.Posts
+        var baiViet = _context.Posts
             .Include(post => post.PostProvinces)
-            .FirstOrDefaultAsync(post => post.Id == id);
+            .FirstOrDefault(post => post.Id == id && post.PostType == PostTypes.Recipe);
         if (baiViet == null)
         {
             return NotFound();
@@ -138,7 +140,7 @@ public class PostsController : Controller
         baiViet.SelectedProvinceIds = baiViet.PostProvinces
             .Select(postProvince => postProvince.ProvinceId)
             .ToList();
-        await LoadProvincesAsync(baiViet.SelectedProvinceIds);
+        LoadProvinces(baiViet.SelectedProvinceIds);
         return View(baiViet);
     }
 
@@ -147,7 +149,7 @@ public class PostsController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int? id, [Bind("Id,Title,Content,ImageUrl,Status,RejectionReason,CategoryId,Category,UserId,User,ApprovedBy,AdminApprover,ApprovedAt,CreatedAt,UpdatedAt,SelectedProvinceIds")] Post baiViet)
+    public IActionResult Edit(int? id, [Bind("Id,Title,Content,ImageUrl,Status,RejectionReason,CategoryId,Category,UserId,User,ApprovedBy,AdminApprover,ApprovedAt,CreatedAt,UpdatedAt,SelectedProvinceIds")] Post baiViet)
     {
         if (id != baiViet.Id)
         {
@@ -158,9 +160,10 @@ public class PostsController : Controller
         {
             try
             {
+                baiViet.PostType = PostTypes.Recipe;
                 _context.Update(baiViet);
-                await _context.SaveChangesAsync();
-                await SavePostProvincesAsync(baiViet.Id, baiViet.SelectedProvinceIds);
+                _context.SaveChanges();
+                SavePostProvinces(baiViet.Id, baiViet.SelectedProvinceIds);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -175,20 +178,20 @@ public class PostsController : Controller
             }
             return RedirectToAction(nameof(Index));
         }
-        await LoadProvincesAsync(baiViet.SelectedProvinceIds);
+        LoadProvinces(baiViet.SelectedProvinceIds);
         return View(baiViet);
     }
 
     // GET: POSTS/Delete/5
-    public async Task<IActionResult> Delete(int? id)
+    public IActionResult Delete(int? id)
     {
         if (id == null)
         {
             return NotFound();
         }
 
-        var baiViet = await _context.Posts
-            .FirstOrDefaultAsync(dong => dong.Id == id);
+        var baiViet = _context.Posts
+            .FirstOrDefault(dong => dong.Id == id && dong.PostType == PostTypes.Recipe);
         if (baiViet == null)
         {
             return NotFound();
@@ -200,15 +203,20 @@ public class PostsController : Controller
     // POST: POSTS/Delete/5
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int? id)
+    public IActionResult DeleteConfirmed(int? id)
     {
-        var baiViet = await _context.Posts.FindAsync(id);
+        var baiViet = _context.Posts.Find(id);
         if (baiViet != null)
         {
+            if (baiViet.PostType != PostTypes.Recipe)
+            {
+                return NotFound();
+            }
+
             _context.Posts.Remove(baiViet);
         }
 
-        await _context.SaveChangesAsync();
+        _context.SaveChanges();
         return RedirectToAction(nameof(Index));
     }
 
@@ -217,20 +225,20 @@ public class PostsController : Controller
         return _context.Posts.Any(dong => dong.Id == id);
     }
 
-    private async Task LoadProvincesAsync(IEnumerable<int>? selectedProvinceIds = null)
+    private void LoadProvinces(IEnumerable<int>? selectedProvinceIds = null)
     {
-        var provinces = await _context.Provinces
+        var provinces = _context.Provinces
             .OrderBy(province => province.Name)
-            .ToListAsync();
+            .ToList();
 
         ViewBag.Provinces = new MultiSelectList(provinces, "Id", "Name", selectedProvinceIds);
     }
 
-    private async Task SavePostProvincesAsync(int postId, IEnumerable<int> provinceIds)
+    private void SavePostProvinces(int postId, IEnumerable<int> provinceIds)
     {
-        var currentPostProvinces = await _context.PostProvinces
+        var currentPostProvinces = _context.PostProvinces
             .Where(postProvince => postProvince.PostId == postId)
-            .ToListAsync();
+            .ToList();
 
         _context.PostProvinces.RemoveRange(currentPostProvinces);
 
@@ -243,6 +251,6 @@ public class PostsController : Controller
             });
 
         _context.PostProvinces.AddRange(nextPostProvinces);
-        await _context.SaveChangesAsync();
+        _context.SaveChanges();
     }
 }

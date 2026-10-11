@@ -81,7 +81,7 @@
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
             <div>
                 <span class="text-uppercase tracking-wider text-muted small fw-semibold">BÀI ĐĂNG</span>
-                <h2 class="font-serif fw-bold text-dark mt-1 mb-0">Công thức đã chia sẻ</h2>
+                <h2 class="font-serif fw-bold text-dark mt-1 mb-0">Bài viết đã chia sẻ</h2>
             </div>
             @if (Model.IsOwner)
             {
@@ -99,11 +99,15 @@
                 @foreach (var item in Model.Posts)
                 {
                     var post = item.Post;
+                    var detailController = post.PostType == ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.PostTypes.KitchenCorner
+                        ? "KitchenCorners"
+                        : "Recipes";
+
                     <div class="col-md-6 col-lg-4">
                         <article class="card card-recipe h-100 border-0 rounded-4 shadow-sm overflow-hidden">
                             @if (post.Status == 1)
                             {
-                                <a asp-controller="Recipes" asp-action="Details" asp-route-id="@post.Id" class="text-decoration-none d-flex flex-column h-100">
+                                <a asp-controller="@detailController" asp-action="Details" asp-route-id="@post.Id" class="text-decoration-none d-flex flex-column h-100">
                                     <img src="@(string.IsNullOrWhiteSpace(post.ImageUrl) ? fallbackImage : post.ImageUrl)" class="card-img-top recipe-img" alt="@post.Title">
                                     <div class="card-body p-3 d-flex flex-column">
                                         <partial name="_ProfilePostCardBody" model="item" />
@@ -135,7 +139,7 @@
             <div class="recipe-empty rounded-4 p-4 p-md-5 text-center">
                 <h3 class="h4 fw-bold text-dark">Chưa có bài đăng nào</h3>
                 <p class="text-secondary mb-3">
-                    @(Model.IsOwner ? "Bạn chưa gửi công thức nào. Hãy chia sẻ món ngon đầu tiên của mình." : "Thành viên này chưa có công thức đã được duyệt.")
+                    @(Model.IsOwner ? "Bạn chưa gửi bài viết nào. Hãy chia sẻ món ngon hoặc góc bếp đầu tiên của mình." : "Thành viên này chưa có bài viết đã được duyệt.")
                 </p>
                 @if (Model.IsOwner)
                 {

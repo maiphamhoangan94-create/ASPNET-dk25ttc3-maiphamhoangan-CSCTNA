@@ -1,0 +1,83 @@
+@model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.Post
+
+@{
+    ViewData["Title"] = "Chi tiết góc bếp";
+    var statusText = Model.Status == 1 ? "Đã duyệt" : Model.Status == 2 ? "Từ chối" : "Chờ duyệt";
+    var statusClass = Model.Status == 1 ? "text-bg-success" : Model.Status == 2 ? "text-bg-danger" : "text-bg-warning";
+    var authorName = Model.User?.FullName ?? Model.User?.Username ?? Model.UserId.ToString();
+    var approverName = Model.AdminApprover?.FullName ?? Model.AdminApprover?.Username;
+}
+
+<section class="admin-card">
+    <div class="admin-card-header">
+        <div>
+            <h2 class="admin-card-title">@Model.Title</h2>
+            <p class="admin-card-subtitle">Xem nội dung và ảnh góc bếp trước khi phê duyệt.</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">Quay lại</a>
+    </div>
+
+    <div class="p-3 p-md-4">
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="row g-3">
+                    @foreach (var image in Model.GalleryImages)
+                    {
+                        <div class="col-md-6">
+                            <img src="@image" alt="@Model.Title" class="img-fluid rounded object-fit-cover w-100" style="height: 260px;" />
+                        </div>
+                    }
+                </div>
+
+                <div class="mt-4">
+                    <h3 class="h5 fw-bold">Mô tả</h3>
+                    <p class="text-muted mb-0">@(string.IsNullOrWhiteSpace(Model.Content) ? "Chưa có mô tả." : Model.Content)</p>
+                </div>
+            </div>
+            <aside class="col-lg-4">
+                <div class="border rounded-3 p-3">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-5">Trạng thái</dt>
+                        <dd class="col-sm-7"><span class="badge @statusClass">@statusText</span></dd>
+
+                        <dt class="col-sm-5">Tác giả</dt>
+                        <dd class="col-sm-7">@authorName</dd>
+
+                        <dt class="col-sm-5">Ngày tạo</dt>
+                        <dd class="col-sm-7">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</dd>
+
+                        <dt class="col-sm-5">Người duyệt</dt>
+                        <dd class="col-sm-7">@(string.IsNullOrWhiteSpace(approverName) ? "Chưa có" : approverName)</dd>
+
+                        <dt class="col-sm-5">Thời gian duyệt</dt>
+                        <dd class="col-sm-7">@(Model.ApprovedAt.HasValue ? Model.ApprovedAt.Value.ToString("dd/MM/yyyy HH:mm") : "Chưa có")</dd>
+
+                        @if (!string.IsNullOrWhiteSpace(Model.RejectionReason))
+                        {
+                            <dt class="col-sm-5">Lý do từ chối</dt>
+                            <dd class="col-sm-7">@Model.RejectionReason</dd>
+                        }
+                    </dl>
+                </div>
+
+                <div class="admin-actions mt-3">
+                    @if (Model.Status != 1)
+                    {
+                        <form asp-action="Approve" asp-route-id="@Model.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-success">Duyệt</button>
+                        </form>
+                    }
+                    @if (Model.Status != 2)
+                    {
+                        <form asp-action="Reject" asp-route-id="@Model.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="rejectionReason" value="Không đạt yêu cầu duyệt nội dung." />
+                            <button type="submit" class="btn btn-outline-danger">Từ chối</button>
+                        </form>
+                    }
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>

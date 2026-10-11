@@ -16,9 +16,9 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers.Api
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetCategories()
+        public IActionResult GetCategories()
         {
-            var danhSachDanhMuc = await _context.Categories
+            var danhSachDanhMuc = _context.Categories
                 .AsNoTracking()
                 .OrderBy(danhMuc => danhMuc.Name)
                 .Select(danhMuc => new
@@ -27,15 +27,15 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers.Api
                     danhMuc.Name,
                     danhMuc.Slug
                 })
-                .ToListAsync();
+                .ToList();
 
             return Ok(danhSachDanhMuc);
         }
 
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetCategory(int id)
+        public IActionResult GetCategory(int id)
         {
-            var danhMuc = await _context.Categories
+            var danhMuc = _context.Categories
                 .AsNoTracking()
                 .Where(dong => dong.Id == id)
                 .Select(dong => new
@@ -44,7 +44,7 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers.Api
                     dong.Name,
                     dong.Slug
                 })
-                .FirstOrDefaultAsync();
+                .FirstOrDefault();
 
             return danhMuc == null ? NotFound() : Ok(danhMuc);
         }

@@ -1,0 +1,80 @@
+@model IEnumerable<ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.Post>
+
+@{
+    ViewData["Title"] = "Góc Bếp Ưu Tú";
+}
+
+<section class="kitchen-hero bg-warm">
+    <div class="container py-5">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-7">
+                <span class="text-uppercase tracking-wider text-muted small fw-semibold">GÓC BẾP CỘNG ĐỒNG</span>
+                <h1 class="font-serif display-5 fw-bold text-dark mt-2 mb-3">Góc Bếp Ưu Tú</h1>
+                <p class="text-secondary fs-5 mb-0">Chia sẻ không gian bếp của bạn, nhận đánh giá từ cộng đồng. Bài có điểm sao cao sẽ được ưu tiên hiển thị lên đầu.</p>
+            </div>
+            <div class="col-lg-5 text-lg-end">
+                <a asp-action="Create" class="btn btn-terracotta rounded-pill px-4 py-3">
+                    <i class="fa-solid fa-camera me-2"></i>
+                    Chia sẻ góc bếp
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-white">
+    <div class="container py-4">
+        @if (TempData["KitchenCornerCreatedMessage"] != null)
+        {
+            <div class="alert alert-success rounded-3" role="alert">@TempData["KitchenCornerCreatedMessage"]</div>
+        }
+
+        @if (Model.Any())
+        {
+            <div class="row g-4">
+                @foreach (var post in Model)
+                {
+                    var authorName = post.User?.FullName ?? post.User?.Username ?? "Thành viên Bếp Nhà";
+                    var averageRating = post.Ratings.Any() ? post.Ratings.Average(rating => rating.Score) : 0;
+                    var coverImage = post.GalleryImages.FirstOrDefault() ?? "https://images.unsplash.com/photo-1556911220-bff31c812dba?w=900";
+
+                    <div class="col-md-6 col-xl-4">
+                        <article class="kitchen-card h-100">
+                            <a asp-action="Details" asp-route-id="@post.Id" class="text-decoration-none">
+                                <img src="@coverImage" alt="@post.Title" class="kitchen-card-img">
+                            </a>
+                            <div class="p-4">
+                                <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+                                    <span class="kitchen-rating">
+                                        <i class="fa-solid fa-star"></i>
+                                        @(averageRating > 0 ? averageRating.ToString("0.0") : "0.0")
+                                    </span>
+                                    <span class="text-muted small">@post.Ratings.Count lượt đánh giá</span>
+                                </div>
+                                <h2 class="h4 fw-bold mb-2">
+                                    <a asp-action="Details" asp-route-id="@post.Id" class="text-dark text-decoration-none">@post.Title</a>
+                                </h2>
+                                <p class="text-secondary small mb-3">
+                                    Bởi <a asp-controller="Account" asp-action="Profile" asp-route-id="@post.UserId" class="text-secondary text-decoration-none fw-semibold">@authorName</a>
+                                    · @post.CreatedAt.ToString("dd/MM/yyyy")
+                                </p>
+                                <a asp-action="Details" asp-route-id="@post.Id" class="text-terracotta fw-semibold text-decoration-none">
+                                    Xem chi tiết
+                                    <i class="fa-solid fa-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </article>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="recipe-empty rounded-4 p-5 text-center">
+                <h2 class="h4 fw-bold text-dark mb-2">Chưa có góc bếp nào</h2>
+                <p class="text-secondary mb-4">Hãy là người đầu tiên chia sẻ góc bếp của mình.</p>
+                <a asp-action="Create" class="btn btn-terracotta rounded-pill px-4">Chia sẻ ngay</a>
+            </div>
+        }
+    </div>
+</section>

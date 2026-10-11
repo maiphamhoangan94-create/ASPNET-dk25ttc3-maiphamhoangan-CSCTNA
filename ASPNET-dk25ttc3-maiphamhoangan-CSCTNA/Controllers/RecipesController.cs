@@ -15,7 +15,7 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(int page = 1)
+        public IActionResult Index(int page = 1)
         {
             const int pageSize = 8;
             page = Math.Max(page, 1);
@@ -26,10 +26,10 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
                 .Include(post => post.User)
                 .Include(post => post.PostProvinces)
                     .ThenInclude(postProvince => postProvince.Province)
-                .Where(post => post.Status == 1)
+                .Where(post => post.Status == 1 && post.PostType == PostTypes.Recipe)
                 .OrderByDescending(post => post.CreatedAt);
 
-            var totalRecipes = await approvedRecipes.CountAsync();
+            var totalRecipes = approvedRecipes.Count();
             var totalPages = Math.Max((int)Math.Ceiling(totalRecipes / (double)pageSize), 1);
 
             if (page > totalPages)
@@ -37,10 +37,10 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
                 page = totalPages;
             }
 
-            var recipes = await approvedRecipes
+            var recipes = approvedRecipes
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .ToListAsync();
+                .ToList();
 
             var viewModel = new RecipeListViewModel
             {
@@ -55,9 +55,9 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Details(int id)
+        public IActionResult Details(int id)
         {
-            var recipe = await _context.Posts
+            var recipe = _context.Posts
                 .AsNoTracking()
                 .Include(post => post.Category)
                 .Include(post => post.User)
@@ -66,7 +66,7 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
                 .Include(post => post.Comments.OrderBy(comment => comment.CreatedAt))
                     .ThenInclude(comment => comment.User)
                 .Include(post => post.Ratings)
-                .FirstOrDefaultAsync(post => post.Id == id && post.Status == 1);
+                .FirstOrDefault(post => post.Id == id && post.Status == 1 && post.PostType == PostTypes.Recipe);
 
             if (recipe == null)
             {
@@ -78,7 +78,7 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Rate(int postId, int score)
+        public IActionResult Rate(int postId, int score)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
@@ -93,16 +93,16 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
                 return RedirectToAction(nameof(Details), new { id = postId });
             }
 
-            var recipeExists = await _context.Posts
-                .AnyAsync(post => post.Id == postId && post.Status == 1);
+            var recipeExists = _context.Posts
+                .Any(post => post.Id == postId && post.Status == 1);
 
             if (!recipeExists)
             {
                 return NotFound();
             }
 
-            var rating = await _context.PostRatings
-                .FirstOrDefaultAsync(item => item.PostId == postId && item.UserId == userId.Value);
+            var rating = _context.PostRatings
+                .FirstOrDefault(item => item.PostId == postId && item.UserId == userId.Value);
 
             if (rating == null)
             {
@@ -120,7 +120,7 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
                 rating.UpdatedAt = DateTime.Now;
             }
 
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             TempData["RatingSuccess"] = "Cảm ơn bạn đã đánh giá công thức.";
 
             return RedirectToAction(nameof(Details), new { id = postId });
@@ -128,7 +128,7 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddComment(int postId, string content, int? parentCommentId)
+        public IActionResult AddComment(int postId, string content, int? parentCommentId)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
@@ -137,8 +137,8 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            var recipeExists = await _context.Posts
-                .AnyAsync(post => post.Id == postId && post.Status == 1);
+            var recipeExists = _context.Posts
+                .Any(post => post.Id == postId && post.Status == 1);
 
             if (!recipeExists)
             {
@@ -160,9 +160,9 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
 
             if (parentCommentId.HasValue)
             {
-                var parentComment = await _context.PostComments
+                var parentComment = _context.PostComments
                     .AsNoTracking()
-                    .FirstOrDefaultAsync(comment => comment.Id == parentCommentId.Value && comment.PostId == postId);
+                    .FirstOrDefault(comment => comment.Id == parentCommentId.Value && comment.PostId == postId);
 
                 if (parentComment == null)
                 {
@@ -185,7 +185,7 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
                 CreatedAt = DateTime.Now
             });
 
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             TempData["CommentSuccess"] = parentCommentId.HasValue
                 ? "Đã gửi phản hồi của bạn."
                 : "Đã gửi bình luận của bạn.";
@@ -194,7 +194,7 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
             if (!IsLoggedIn())
             {
@@ -202,14 +202,14 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            await LoadCategoriesAsync();
-            await LoadProvincesAsync();
+            LoadCategories();
+            LoadProvinces();
             return View(new Post());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Title,Content,ImageUrl,CategoryId,SelectedProvinceIds")] Post recipe)
+        public IActionResult Create([Bind("Title,Content,ImageUrl,CategoryId,SelectedProvinceIds")] Post recipe)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
@@ -218,15 +218,15 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            if (!await _context.Categories.AnyAsync(category => category.Id == recipe.CategoryId))
+            if (!recipe.CategoryId.HasValue || !_context.Categories.Any(category => category.Id == recipe.CategoryId.Value))
             {
                 ModelState.AddModelError(nameof(Post.CategoryId), "Danh mục không hợp lệ.");
             }
 
             if (recipe.SelectedProvinceIds.Count > 0)
             {
-                var provinceCount = await _context.Provinces
-                    .CountAsync(province => recipe.SelectedProvinceIds.Contains(province.Id));
+                var provinceCount = _context.Provinces
+                    .Count(province => recipe.SelectedProvinceIds.Contains(province.Id));
 
                 if (provinceCount != recipe.SelectedProvinceIds.Distinct().Count())
                 {
@@ -236,12 +236,13 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
 
             if (!ModelState.IsValid)
             {
-                await LoadCategoriesAsync(recipe.CategoryId);
-                await LoadProvincesAsync(recipe.SelectedProvinceIds);
+                LoadCategories(recipe.CategoryId);
+                LoadProvinces(recipe.SelectedProvinceIds);
                 return View(recipe);
             }
 
             recipe.UserId = userId.Value;
+            recipe.PostType = PostTypes.Recipe;
             recipe.Status = 0;
             recipe.CreatedAt = DateTime.Now;
             recipe.UpdatedAt = null;
@@ -250,9 +251,9 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
             recipe.RejectionReason = null;
 
             _context.Posts.Add(recipe);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
 
-            await SavePostProvincesAsync(recipe.Id, recipe.SelectedProvinceIds);
+            SavePostProvinces(recipe.Id, recipe.SelectedProvinceIds);
 
             TempData["RecipeCreatedMessage"] = "Công thức của bạn đã được gửi và đang chờ duyệt.";
             return RedirectToAction(nameof(Create));
@@ -263,25 +264,25 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
             return HttpContext.Session.GetInt32("UserId") != null;
         }
 
-        private async Task LoadCategoriesAsync(int? selectedCategoryId = null)
+        private void LoadCategories(int? selectedCategoryId = null)
         {
-            var categories = await _context.Categories
+            var categories = _context.Categories
                 .OrderBy(category => category.Name)
-                .ToListAsync();
+                .ToList();
 
             ViewBag.Categories = new SelectList(categories, "Id", "Name", selectedCategoryId);
         }
 
-        private async Task LoadProvincesAsync(IEnumerable<int>? selectedProvinceIds = null)
+        private void LoadProvinces(IEnumerable<int>? selectedProvinceIds = null)
         {
-            var provinces = await _context.Provinces
+            var provinces = _context.Provinces
                 .OrderBy(province => province.Name)
-                .ToListAsync();
+                .ToList();
 
             ViewBag.Provinces = new MultiSelectList(provinces, "Id", "Name", selectedProvinceIds);
         }
 
-        private async Task SavePostProvincesAsync(int postId, IEnumerable<int> provinceIds)
+        private void SavePostProvinces(int postId, IEnumerable<int> provinceIds)
         {
             var postProvinces = provinceIds
                 .Distinct()
@@ -292,7 +293,7 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
                 });
 
             _context.PostProvinces.AddRange(postProvinces);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
     }
 }

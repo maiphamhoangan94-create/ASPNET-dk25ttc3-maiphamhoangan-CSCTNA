@@ -1,0 +1,123 @@
+@model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.Post
+
+@{
+    ViewData["Title"] = Model.Title;
+    var images = Model.GalleryImages;
+    var authorName = Model.User?.FullName ?? Model.User?.Username ?? "Thành viên Bếp Nhà";
+    var currentUserId = Context.Session.GetInt32("UserId");
+    var averageRating = Model.Ratings.Any() ? Model.Ratings.Average(rating => rating.Score) : 0;
+    var currentUserRating = currentUserId == null
+        ? null
+        : Model.Ratings.FirstOrDefault(rating => rating.UserId == currentUserId.Value)?.Score;
+    var contentParagraphs = (Model.Content ?? string.Empty)
+        .Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries)
+        .Select(paragraph => paragraph.Trim())
+        .Where(paragraph => !string.IsNullOrWhiteSpace(paragraph))
+        .ToList();
+}
+
+<section class="kitchen-detail bg-warm">
+    <div class="container py-5">
+        <a asp-action="Index" class="text-terracotta text-decoration-none fw-semibold small d-inline-flex align-items-center gap-2 mb-4">
+            <i class="fa-solid fa-arrow-left"></i>
+            Quay về Góc Bếp Ưu Tú
+        </a>
+        <div class="row g-5 align-items-start">
+            <div class="col-lg-7">
+                <span class="text-uppercase tracking-wider text-muted small fw-semibold">GÓC BẾP CỘNG ĐỒNG</span>
+                <h1 class="font-serif display-5 fw-bold text-dark mt-2 mb-3">@Model.Title</h1>
+                <div class="d-flex flex-wrap align-items-center gap-4 text-muted small mb-4">
+                    <span>
+                        <i class="fa-regular fa-user me-2 text-terracotta"></i>
+                        <a asp-controller="Account" asp-action="Profile" asp-route-id="@Model.UserId" class="text-muted text-decoration-none">@authorName</a>
+                    </span>
+                    <span><i class="fa-regular fa-calendar me-2 text-terracotta"></i>@Model.CreatedAt.ToString("dd/MM/yyyy")</span>
+                    <span><i class="fa-solid fa-images me-2 text-terracotta"></i>@images.Count ảnh</span>
+                    <span><i class="fa-solid fa-star me-2 text-terracotta"></i>@(averageRating > 0 ? averageRating.ToString("0.0") : "Chưa có") sao</span>
+                </div>
+
+                <div class="kitchen-gallery kitchen-gallery-@images.Count">
+                    @foreach (var image in images)
+                    {
+                        <img src="@image" alt="@Model.Title" class="kitchen-gallery-img">
+                    }
+                </div>
+            </div>
+            <aside class="col-lg-5">
+                <div class="recipe-detail-panel bg-white rounded-4 p-4">
+                    <div class="rating-summary mb-4">
+                        <div class="rating-stars-display mb-1" aria-label="Điểm trung bình @averageRating.ToString("0.0") trên 5">
+                            @for (var star = 1; star <= 5; star++)
+                            {
+                                <i class="fa-@(star <= Math.Round(averageRating) ? "solid" : "regular") fa-star"></i>
+                            }
+                        </div>
+                        <strong class="text-dark">@(averageRating > 0 ? averageRating.ToString("0.0") : "0.0")/5</strong>
+                        <span class="text-muted small">(@Model.Ratings.Count lượt)</span>
+                    </div>
+
+                    @if (TempData["RatingSuccess"] != null)
+                    {
+                        <div class="alert alert-success rounded-4 border-0">@TempData["RatingSuccess"]</div>
+                    }
+
+                    @if (TempData["RatingError"] != null)
+                    {
+                        <div class="alert alert-danger rounded-4 border-0">@TempData["RatingError"]</div>
+                    }
+
+                    @if (currentUserId != null)
+                    {
+                        <form asp-action="Rate" method="post" class="rating-form bg-warm rounded-4 p-4">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="postId" value="@Model.Id" />
+                            <p class="fw-semibold text-dark mb-3">
+                                @(currentUserRating.HasValue ? $"Bạn đã chấm {currentUserRating.Value}/5 sao." : "Chọn số sao cho góc bếp này.")
+                            </p>
+                            <div class="rating-options" role="radiogroup" aria-label="Chọn điểm đánh giá">
+                                @for (var score = 5; score >= 1; score--)
+                                {
+                                    <input class="btn-check" type="radio" name="score" id="rating-@score" value="@score" autocomplete="off" required @(currentUserRating == score ? "checked" : "")>
+                                    <label class="rating-star-option" for="rating-@score" title="@score sao">
+                                        <i class="fa-solid fa-star"></i>
+                                        <span class="visually-hidden">@score sao</span>
+                                    </label>
+                                }
+                            </div>
+                            <div class="d-flex justify-content-end mt-3">
+                                <button type="submit" class="btn btn-terracotta rounded-pill px-4">Gửi đánh giá</button>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="rating-login bg-warm rounded-4 p-4">
+                            <p class="text-secondary mb-3">Đăng nhập để chấm điểm góc bếp này từ 1 đến 5 sao.</p>
+                            <a asp-controller="Account" asp-action="Login" class="btn btn-terracotta rounded-pill px-4">Đăng nhập để đánh giá</a>
+                        </div>
+                    }
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-white">
+    <div class="container">
+        <article class="recipe-content col-lg-8">
+            <span class="text-uppercase tracking-wider text-muted small fw-semibold">CÂU CHUYỆN GÓC BẾP</span>
+            <h2 class="font-serif fw-bold text-dark mt-1 mb-4">Không gian và cảm hứng</h2>
+            @if (contentParagraphs.Any())
+            {
+                foreach (var paragraph in contentParagraphs)
+                {
+                    <p>@paragraph</p>
+                }
+            }
+            else
+            {
+                <p class="text-secondary">Tác giả chưa thêm mô tả chi tiết cho góc bếp này.</p>
+            }
+        </article>
+    </div>
+</section>

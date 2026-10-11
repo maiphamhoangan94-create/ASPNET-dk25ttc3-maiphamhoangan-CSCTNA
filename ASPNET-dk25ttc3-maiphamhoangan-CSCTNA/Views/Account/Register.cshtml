@@ -1,4 +1,4 @@
-﻿@model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.RegisterViewModel
+@model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.RegisterViewModel
 
 @{
     ViewData["Title"] = "Đăng ký tài khoản";
@@ -70,7 +70,5 @@
 </section>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
 }

@@ -28,6 +28,9 @@
                 <a class="admin-nav-link" asp-area="Admin" asp-controller="Posts" asp-action="Index">
                     <span>Bài viết</span>
                 </a>
+                <a class="admin-nav-link" asp-area="Admin" asp-controller="KitchenCorners" asp-action="Index">
+                    <span>Góc bếp</span>
+                </a>
                 <a class="admin-nav-link" asp-area="Admin" asp-controller="Users" asp-action="Index">
                     <span>Người dùng</span>
                 </a>
@@ -52,6 +55,6 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

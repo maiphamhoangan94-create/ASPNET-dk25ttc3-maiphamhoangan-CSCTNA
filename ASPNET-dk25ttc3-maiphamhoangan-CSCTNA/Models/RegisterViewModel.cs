@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models
 {

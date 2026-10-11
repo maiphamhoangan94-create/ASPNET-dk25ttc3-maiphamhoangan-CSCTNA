@@ -1,0 +1,89 @@
+@model IEnumerable<ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.Post>
+
+@{
+    ViewData["Title"] = "Quản lý góc bếp";
+}
+
+<section class="admin-card">
+    <div class="admin-card-header">
+        <div>
+            <h2 class="admin-card-title">Danh sách góc bếp</h2>
+            <p class="admin-card-subtitle">Duyệt hình ảnh góc bếp cộng đồng trước khi hiển thị công khai.</p>
+        </div>
+    </div>
+
+    @if (TempData["KitchenCornerMessage"] != null)
+    {
+        <div class="alert alert-success mx-3 mt-3 mb-0" role="alert">
+            @TempData["KitchenCornerMessage"]
+        </div>
+    }
+
+    <div class="admin-table-wrap">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Tiêu đề</th>
+                    <th>Trạng thái</th>
+                    <th>Tác giả</th>
+                    <th>Ảnh tải lên</th>
+                    <th>Đánh giá</th>
+                    <th>Ngày tạo</th>
+                    <th class="text-end">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var post in Model)
+            {
+                var statusText = post.Status == 1 ? "Đã duyệt" : post.Status == 2 ? "Từ chối" : "Chờ duyệt";
+                var statusClass = post.Status == 1 ? "text-bg-success" : post.Status == 2 ? "text-bg-danger" : "text-bg-warning";
+                var coverImage = post.GalleryImages.FirstOrDefault() ?? post.ImageUrl;
+                var averageRating = post.Ratings.Any() ? post.Ratings.Average(rating => rating.Score) : 0;
+
+                <tr>
+                    <td>
+                        @if (!string.IsNullOrWhiteSpace(coverImage))
+                        {
+                            <img src="@coverImage" alt="@post.Title" class="rounded object-fit-cover" style="width: 64px; height: 44px;" />
+                        }
+                    </td>
+                    <td>
+                        <div class="fw-semibold">@post.Title</div>
+                        <div class="text-muted small text-truncate-2">@post.Content</div>
+                    </td>
+                    <td><span class="badge @statusClass">@statusText</span></td>
+                    <td>@(post.User?.FullName ?? post.User?.Username ?? post.UserId.ToString())</td>
+                    <td>@post.GalleryImages.Count ảnh</td>
+                    <td>@(post.Ratings.Any() ? $"{averageRating:0.0}/5 ({post.Ratings.Count})" : "Chưa có")</td>
+                    <td>@post.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>
+                        <div class="admin-actions">
+                            @if (post.Status != 1)
+                            {
+                                <form asp-action="Approve" asp-route-id="@post.Id" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-success">Duyệt</button>
+                                </form>
+                            }
+                            @if (post.Status != 2)
+                            {
+                                <form asp-action="Reject" asp-route-id="@post.Id" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="rejectionReason" value="Không đạt yêu cầu duyệt nội dung." />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Từ chối</button>
+                                </form>
+                            }
+                            <a asp-action="Details" asp-route-id="@post.Id" class="btn btn-sm btn-outline-secondary">Chi tiết</a>
+                            <form asp-action="Delete" asp-route-id="@post.Id" method="post" class="d-inline" onsubmit="return confirm('Xóa góc bếp này?');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</section>

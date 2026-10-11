@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models
@@ -21,6 +21,14 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models
         [Display(Name = "Ảnh đại diện")]
         public string? ImageUrl { get; set; }
 
+        [Required]
+        [StringLength(50)]
+        [Display(Name = "Loại bài viết")]
+        public string PostType { get; set; } = PostTypes.Recipe;
+
+        [Display(Name = "Bộ ảnh")]
+        public string? GalleryImageUrls { get; set; }
+
         [Display(Name = "Trạng thái")]
         public int Status { get; set; }= 0; // Mặc định: 0 - Chờ duyệt, 1 - Đã duyệt, 2 - Từ chối
 
@@ -28,9 +36,8 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models
         [Display(Name = "Lý do từ chối")]
         public string? RejectionReason { get; set; }
 
-        [Required(ErrorMessage = "Vui lòng chọn danh mục")]
         [Display(Name = "Danh mục")]
-        public int CategoryId { get; set; }
+        public int? CategoryId { get; set; }
 
         [ForeignKey("CategoryId")]
         public virtual Category? Category { get; set; }
@@ -66,5 +73,18 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models
         [NotMapped]
         [Display(Name = "Tỉnh thành")]
         public List<int> SelectedProvinceIds { get; set; } = new();
+
+        [NotMapped]
+        public List<string> GalleryImages => (GalleryImageUrls ?? string.Empty)
+            .Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries)
+            .Select(imageUrl => imageUrl.Trim())
+            .Where(imageUrl => !string.IsNullOrWhiteSpace(imageUrl))
+            .ToList();
+    }
+
+    public static class PostTypes
+    {
+        public const string Recipe = "Recipe";
+        public const string KitchenCorner = "KitchenCorner";
     }
 }

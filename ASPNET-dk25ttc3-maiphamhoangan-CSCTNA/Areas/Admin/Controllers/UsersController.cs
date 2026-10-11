@@ -14,26 +14,26 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Areas.Admin.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var danhSachNguoiDung = await _context.Users
+            var danhSachNguoiDung = _context.Users
                 .AsNoTracking()
                 .OrderBy(nguoiDung => nguoiDung.Username)
-                .ToListAsync();
+                .ToList();
 
             return View(danhSachNguoiDung);
         }
 
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var nguoiDung = await _context.Users
+            var nguoiDung = _context.Users
                 .AsNoTracking()
-                .FirstOrDefaultAsync(dong => dong.UserId == id);
+                .FirstOrDefault(dong => dong.UserId == id);
 
             return nguoiDung == null ? NotFound() : View(nguoiDung);
         }
@@ -49,9 +49,9 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Username,Email,Password,FullName,Role")] User nguoiDung)
+        public IActionResult Create([Bind("Username,Email,Password,FullName,Role")] User nguoiDung)
         {
-            if (await IsUsernameOrEmailExistsAsync(nguoiDung.Username, nguoiDung.Email))
+            if (IsUsernameOrEmailExists(nguoiDung.Username, nguoiDung.Email))
             {
                 ModelState.AddModelError("", "Ten dang nhap hoac email da ton tai.");
             }
@@ -65,19 +65,19 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Areas.Admin.Controllers
             nguoiDung.CreatedAt = DateTime.Now;
 
             _context.Users.Add(nguoiDung);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
 
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var nguoiDung = await _context.Users.FindAsync(id);
+            var nguoiDung = _context.Users.Find(id);
             if (nguoiDung == null)
             {
                 return NotFound();
@@ -89,7 +89,7 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserId,Username,Email,Password,FullName,Role,CreatedAt")] User nguoiDung)
+        public IActionResult Edit(int id, [Bind("UserId,Username,Email,Password,FullName,Role,CreatedAt")] User nguoiDung)
         {
             if (id != nguoiDung.UserId)
             {
@@ -101,7 +101,7 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Areas.Admin.Controllers
                 ModelState.Remove("Password");
             }
 
-            if (await IsUsernameOrEmailExistsAsync(nguoiDung.Username, nguoiDung.Email, nguoiDung.UserId))
+            if (IsUsernameOrEmailExists(nguoiDung.Username, nguoiDung.Email, nguoiDung.UserId))
             {
                 ModelState.AddModelError("", "Ten dang nhap hoac email da ton tai.");
             }
@@ -111,7 +111,7 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Areas.Admin.Controllers
                 return View(nguoiDung);
             }
 
-            var nguoiDungCu = await _context.Users.FindAsync(id);
+            var nguoiDungCu = _context.Users.Find(id);
             if (nguoiDungCu == null)
             {
                 return NotFound();
@@ -128,29 +128,29 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Areas.Admin.Controllers
                 nguoiDungCu.Password = EncodePassword(nguoiDung.Password);
             }
 
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var nguoiDung = await _context.Users
+            var nguoiDung = _context.Users
                 .AsNoTracking()
-                .FirstOrDefaultAsync(dong => dong.UserId == id);
+                .FirstOrDefault(dong => dong.UserId == id);
 
             return nguoiDung == null ? NotFound() : View(nguoiDung);
         }
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
-            var nguoiDung = await _context.Users.FindAsync(id);
+            var nguoiDung = _context.Users.Find(id);
             if (nguoiDung == null)
             {
                 return RedirectToAction(nameof(Index));
@@ -159,7 +159,7 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Areas.Admin.Controllers
             try
             {
                 _context.Users.Remove(nguoiDung);
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
             }
             catch (DbUpdateException)
             {
@@ -170,9 +170,9 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task<bool> IsUsernameOrEmailExistsAsync(string taiKhoan, string email, int? maNguoiDungBoQua = null)
+        private bool IsUsernameOrEmailExists(string taiKhoan, string email, int? maNguoiDungBoQua = null)
         {
-            return await _context.Users.AnyAsync(nguoiDung =>
+            return _context.Users.Any(nguoiDung =>
                 (nguoiDung.Username == taiKhoan || nguoiDung.Email == email) &&
                 (!maNguoiDungBoQua.HasValue || nguoiDung.UserId != maNguoiDungBoQua.Value));
         }

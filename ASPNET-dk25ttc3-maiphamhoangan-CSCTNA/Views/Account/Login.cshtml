@@ -1,4 +1,4 @@
-﻿@model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.LoginViewModel
+@model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.LoginViewModel
 
 @{
     ViewData["Title"] = "Đăng nhập";
@@ -64,7 +64,5 @@
 </section>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
 }

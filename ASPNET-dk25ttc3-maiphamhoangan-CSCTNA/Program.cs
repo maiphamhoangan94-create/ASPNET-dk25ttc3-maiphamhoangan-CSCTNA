@@ -19,6 +19,31 @@ trinhTaoWeb.Services.AddSession(cauHinh =>
 
 var ungDung = trinhTaoWeb.Build();
 
+using (var vungDichVu = ungDung.Services.CreateScope())
+{
+    var db = vungDichVu.ServiceProvider.GetRequiredService<AnmphDbContext>();
+
+    db.Database.ExecuteSqlRaw(@"
+IF COL_LENGTH('dbo.Posts', 'PostType') IS NULL
+BEGIN
+    ALTER TABLE [dbo].[Posts]
+    ADD [PostType] NVARCHAR(50) NOT NULL
+        CONSTRAINT [DF_Posts_PostType] DEFAULT (N'Recipe')
+END
+
+IF COL_LENGTH('dbo.Posts', 'GalleryImageUrls') IS NULL
+BEGIN
+    ALTER TABLE [dbo].[Posts]
+    ADD [GalleryImageUrls] NVARCHAR(MAX) NULL
+END
+
+IF COL_LENGTH('dbo.Posts', 'CategoryId') IS NOT NULL
+BEGIN
+    ALTER TABLE [dbo].[Posts] ALTER COLUMN [CategoryId] INT NULL
+END
+");
+}
+
 // Configure the HTTP request pipeline.
 if (!ungDung.Environment.IsDevelopment())
 {
@@ -28,6 +53,7 @@ if (!ungDung.Environment.IsDevelopment())
 }
 
 ungDung.UseHttpsRedirection();
+ungDung.UseStaticFiles();
 ungDung.UseRouting();
 
 ungDung.UseSession();

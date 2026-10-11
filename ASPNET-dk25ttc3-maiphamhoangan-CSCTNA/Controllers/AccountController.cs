@@ -92,7 +92,7 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Profile(int? id)
+        public IActionResult Profile(int? id)
         {
             var currentUserId = HttpContext.Session.GetInt32("UserId");
             var profileUserId = id ?? currentUserId;
@@ -103,9 +103,9 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
                 return RedirectToAction(nameof(Login));
             }
 
-            var user = await _context.Users
+            var user = _context.Users
                 .AsNoTracking()
-                .FirstOrDefaultAsync(item => item.UserId == profileUserId.Value);
+                .FirstOrDefault(item => item.UserId == profileUserId.Value);
 
             if (user == null)
             {
@@ -115,7 +115,7 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
             var isOwner = currentUserId == user.UserId;
             var visibleStatuses = isOwner ? new[] { 0, 1, 2 } : new[] { 1 };
 
-            var posts = await _context.Posts
+            var posts = _context.Posts
                 .AsNoTracking()
                 .Include(post => post.Category)
                 .Include(post => post.PostProvinces)
@@ -124,7 +124,7 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
                 .Include(post => post.Ratings)
                 .Where(post => post.UserId == user.UserId && visibleStatuses.Contains(post.Status))
                 .OrderByDescending(post => post.CreatedAt)
-                .ToListAsync();
+                .ToList();
 
             var viewModel = new ProfileViewModel
             {

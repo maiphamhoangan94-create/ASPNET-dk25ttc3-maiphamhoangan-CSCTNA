@@ -9,6 +9,7 @@
     var provinceDisplay = provinces.Count >= 3
         ? string.Join(", ", provinces.Take(2)) + ", ..."
         : string.Join(", ", provinces);
+    var isKitchenCorner = post.PostType == ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.PostTypes.KitchenCorner;
 
     string statusText = post.Status switch
     {
@@ -33,7 +34,7 @@
         {
             <img src="@post.Category.ImageUrl" alt="@post.Category.Name" class="rounded-circle object-fit-cover" style="width: 18px; height: 18px;" />
         }
-        @(post.Category?.Name ?? "Công thức")
+        @(isKitchenCorner ? "Góc Bếp" : post.Category?.Name ?? "Công thức")
     </span>
     <span class="badge @statusClass rounded-pill">@statusText</span>
 </div>

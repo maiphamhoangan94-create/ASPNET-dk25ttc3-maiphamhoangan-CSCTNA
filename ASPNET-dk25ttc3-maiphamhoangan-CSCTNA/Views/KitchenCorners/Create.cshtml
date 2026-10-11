@@ -1,0 +1,58 @@
+@model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.KitchenCornerCreateViewModel
+
+@{
+    ViewData["Title"] = "Chia sẻ góc bếp";
+}
+
+<section class="py-5 bg-white">
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-9 col-xl-8">
+                <div class="mb-4">
+                    <span class="text-uppercase tracking-wider text-muted small fw-semibold">GÓC BẾP ƯU TÚ</span>
+                    <h1 class="h2 fw-bold text-dark mt-2 mb-2">Chia sẻ hình ảnh góc bếp của bạn</h1>
+                    <p class="text-secondary mb-0">Tải lên từ 1 đến 5 hình ảnh. Bài sau khi gửi sẽ ở trạng thái chờ duyệt trước khi hiển thị công khai.</p>
+                </div>
+
+                @if (TempData["KitchenCornerCreatedMessage"] != null)
+                {
+                    <div class="alert alert-success rounded-3" role="alert">
+                        @TempData["KitchenCornerCreatedMessage"]
+                    </div>
+                }
+
+                <form asp-action="Create" method="post" enctype="multipart/form-data" class="recipe-submit-form bg-warm rounded-4 p-4 p-md-5">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label fw-semibold">Tên góc bếp</label>
+                        <input asp-for="Title" class="form-control form-control-lg" placeholder="Ví dụ: Góc bếp nhỏ đầy nắng" />
+                        <span asp-validation-for="Title" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Images" class="form-label fw-semibold">Hình ảnh góc bếp</label>
+                        <input asp-for="Images" type="file" class="form-control" accept="image/*" multiple />
+                        <div class="form-text">Chọn tối thiểu 1 ảnh và tối đa 5 ảnh.</div>
+                        <span asp-validation-for="Images" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Content" class="form-label fw-semibold">Câu chuyện hoặc mô tả</label>
+                        <textarea asp-for="Content" class="form-control" rows="8" placeholder="Kể thêm về góc bếp, cách bạn sắp xếp đồ dùng, ánh sáng, kỷ niệm nấu ăn..."></textarea>
+                        <span asp-validation-for="Content" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                        <button type="submit" class="btn btn-terracotta rounded-pill px-4 py-2">Đăng góc bếp</button>
+                        <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4 py-2">Về danh sách</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

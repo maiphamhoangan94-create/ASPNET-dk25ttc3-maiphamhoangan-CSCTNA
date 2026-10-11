@@ -14,24 +14,24 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var tasteCategories = await _context.Categories
+            var tasteCategories = _context.Categories
                 .AsNoTracking()
                 .OrderBy(category => category.Name)
                 .Take(5)
-                .ToListAsync();
+                .ToList();
 
-            var approvedPosts = await _context.Posts
+            var approvedPosts = _context.Posts
                 .AsNoTracking()
                 .Include(post => post.Category)
                 .Include(post => post.User)
                 .Include(post => post.PostProvinces)
                     .ThenInclude(postProvince => postProvince.Province)
-                .Where(post => post.Status == 1)
+                .Where(post => post.Status == 1 && post.PostType == PostTypes.Recipe)
                 .OrderByDescending(post => post.CreatedAt)
                 .Take(8)
-                .ToListAsync();
+                .ToList();
 
             ViewBag.TasteCategories = tasteCategories;
 
@@ -39,22 +39,22 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ExploreProvinces(int? provinceId)
+        public IActionResult ExploreProvinces(int? provinceId)
         {
-            var provinces = await _context.Provinces
+            var provinces = _context.Provinces
                 .AsNoTracking()
                 .OrderBy(province => province.Name)
-                .ToListAsync();
+                .ToList();
 
-            var approvedPosts = await _context.Posts
+            var approvedPosts = _context.Posts
                 .AsNoTracking()
                 .Include(post => post.Category)
                 .Include(post => post.User)
                 .Include(post => post.PostProvinces)
                     .ThenInclude(postProvince => postProvince.Province)
-                .Where(post => post.Status == 1)
+                .Where(post => post.Status == 1 && post.PostType == PostTypes.Recipe)
                 .OrderByDescending(post => post.CreatedAt)
-                .ToListAsync();
+                .ToList();
 
             if (provinceId.HasValue && !provinces.Any(province => province.Id == provinceId.Value))
             {
