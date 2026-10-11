@@ -13,6 +13,13 @@
         .ToList();
 
     var authorName = Model.User?.FullName ?? Model.User?.Username ?? "Thành viên Bếp Nhà";
+    var currentUserId = Context.Session.GetInt32("UserId");
+    var averageRating = Model.Ratings.Any()
+        ? Model.Ratings.Average(rating => rating.Score)
+        : 0;
+    var currentUserRating = currentUserId == null
+        ? null
+        : Model.Ratings.FirstOrDefault(rating => rating.UserId == currentUserId.Value)?.Score;
     var contentParagraphs = (Model.Content ?? string.Empty)
         .Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries)
         .Select(paragraph => paragraph.Trim())
@@ -45,6 +52,7 @@
                 <div class="d-flex flex-wrap align-items-center gap-4 text-muted small">
                     <span><i class="fa-regular fa-user me-2 text-terracotta"></i>@authorName</span>
                     <span><i class="fa-regular fa-calendar me-2 text-terracotta"></i>@Model.CreatedAt.ToString("dd/MM/yyyy")</span>
+                    <span><i class="fa-solid fa-star me-2 text-terracotta"></i>@(averageRating > 0 ? averageRating.ToString("0.0") : "Chưa có") sao</span>
                     <span><i class="fa-solid fa-bowl-food me-2 text-terracotta"></i>Dễ nấu tại nhà</span>
                 </div>
             </div>
@@ -81,6 +89,66 @@
                     }
                 </article>
 
+                <section class="recipe-rating mt-5 pt-4 border-top">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+                        <div>
+                            <span class="text-uppercase tracking-wider text-muted small fw-semibold">ĐÁNH GIÁ</span>
+                            <h2 class="font-serif fw-bold text-dark mt-1 mb-0">Xếp hạng công thức</h2>
+                        </div>
+                        <div class="rating-summary text-end">
+                            <div class="rating-stars-display mb-1" aria-label="Điểm trung bình @averageRating.ToString("0.0") trên 5">
+                                @for (var star = 1; star <= 5; star++)
+                                {
+                                    <i class="fa-@(star <= Math.Round(averageRating) ? "solid" : "regular") fa-star"></i>
+                                }
+                            </div>
+                            <strong class="text-dark">@(averageRating > 0 ? averageRating.ToString("0.0") : "0.0")/5</strong>
+                            <span class="text-muted small">(@Model.Ratings.Count lượt)</span>
+                        </div>
+                    </div>
+
+                    @if (TempData["RatingSuccess"] != null)
+                    {
+                        <div class="alert alert-success rounded-4 border-0">@TempData["RatingSuccess"]</div>
+                    }
+
+                    @if (TempData["RatingError"] != null)
+                    {
+                        <div class="alert alert-danger rounded-4 border-0">@TempData["RatingError"]</div>
+                    }
+
+                    @if (currentUserId != null)
+                    {
+                        <form asp-controller="Recipes" asp-action="Rate" method="post" class="rating-form bg-warm rounded-4 p-4">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="postId" value="@Model.Id" />
+                            <p class="fw-semibold text-dark mb-3">
+                                @(currentUserRating.HasValue ? $"Bạn đã chấm {currentUserRating.Value}/5 sao. Chọn lại để cập nhật điểm." : "Chọn số sao bạn muốn đánh giá.")
+                            </p>
+                            <div class="rating-options" role="radiogroup" aria-label="Chọn điểm đánh giá">
+                                @for (var score = 5; score >= 1; score--)
+                                {
+                                    <input class="btn-check" type="radio" name="score" id="rating-@score" value="@score" autocomplete="off" required @(currentUserRating == score ? "checked" : "")>
+                                    <label class="rating-star-option" for="rating-@score" title="@score sao">
+                                        <i class="fa-solid fa-star"></i>
+                                        <span class="visually-hidden">@score sao</span>
+                                    </label>
+                                }
+                            </div>
+                            <div class="d-flex justify-content-end mt-3">
+                                <button type="submit" class="btn btn-terracotta rounded-pill px-4">Gửi đánh giá</button>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="rating-login bg-warm rounded-4 p-4">
+                            <p class="text-secondary mb-3">Đăng nhập để chấm điểm công thức này từ 1 đến 5 sao.</p>
+                            <a asp-controller="Account" asp-action="Login" class="btn btn-terracotta rounded-pill px-4">Đăng nhập để đánh giá</a>
+                        </div>
+                    }
+                </section>
+
                 <section class="recipe-comments mt-5 pt-4 border-top">
                     <div class="d-flex align-items-center justify-content-between gap-3 mb-4">
                         <div>
@@ -102,7 +170,7 @@
                         <div class="alert alert-danger rounded-4 border-0">@TempData["CommentError"]</div>
                     }
 
-                    @if (Context.Session.GetInt32("UserId") != null)
+                    @if (currentUserId != null)
                     {
                         <form asp-controller="Recipes" asp-action="AddComment" method="post" class="comment-form bg-warm rounded-4 p-4 mb-4">
                             @Html.AntiForgeryToken()
@@ -142,7 +210,7 @@
                                     </div>
                                     <p class="text-secondary mb-3">@comment.Content</p>
 
-                                    @if (Context.Session.GetInt32("UserId") != null)
+                                    @if (currentUserId != null)
                                     {
                                         <button class="btn btn-link comment-reply-toggle p-0 mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#replyForm-@comment.Id" aria-expanded="false" aria-controls="replyForm-@comment.Id">
                                             Trả lời
@@ -206,6 +274,10 @@
                     <div class="recipe-fact">
                         <span>Ngày đăng</span>
                         <strong>@Model.CreatedAt.ToString("dd/MM/yyyy")</strong>
+                    </div>
+                    <div class="recipe-fact">
+                        <span>Đánh giá</span>
+                        <strong>@(averageRating > 0 ? $"{averageRating:0.0}/5 ({Model.Ratings.Count})" : "Chưa có")</strong>
                     </div>
                     @if (provinces.Any())
                     {

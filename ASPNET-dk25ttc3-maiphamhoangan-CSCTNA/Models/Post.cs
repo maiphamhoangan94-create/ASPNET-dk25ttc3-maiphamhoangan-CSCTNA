@@ -61,6 +61,8 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models
 
         public virtual ICollection<PostComment> Comments { get; set; } = new List<PostComment>();
 
+        public virtual ICollection<PostRating> Ratings { get; set; } = new List<PostRating>();
+
         [NotMapped]
         [Display(Name = "Tỉnh thành")]
         public List<int> SelectedProvinceIds { get; set; } = new();

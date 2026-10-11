@@ -65,6 +65,7 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
                     .ThenInclude(postProvince => postProvince.Province)
                 .Include(post => post.Comments.OrderBy(comment => comment.CreatedAt))
                     .ThenInclude(comment => comment.User)
+                .Include(post => post.Ratings)
                 .FirstOrDefaultAsync(post => post.Id == id && post.Status == 1);
 
             if (recipe == null)
@@ -73,6 +74,56 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
             }
 
             return View(recipe);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Rate(int postId, int score)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                TempData["LoginMessage"] = "Vui lòng đăng nhập để đánh giá công thức.";
+                return RedirectToAction("Login", "Account");
+            }
+
+            if (score < 1 || score > 5)
+            {
+                TempData["RatingError"] = "Vui lòng chọn điểm đánh giá từ 1 đến 5 sao.";
+                return RedirectToAction(nameof(Details), new { id = postId });
+            }
+
+            var recipeExists = await _context.Posts
+                .AnyAsync(post => post.Id == postId && post.Status == 1);
+
+            if (!recipeExists)
+            {
+                return NotFound();
+            }
+
+            var rating = await _context.PostRatings
+                .FirstOrDefaultAsync(item => item.PostId == postId && item.UserId == userId.Value);
+
+            if (rating == null)
+            {
+                _context.PostRatings.Add(new PostRating
+                {
+                    PostId = postId,
+                    UserId = userId.Value,
+                    Score = score,
+                    CreatedAt = DateTime.Now
+                });
+            }
+            else
+            {
+                rating.Score = score;
+                rating.UpdatedAt = DateTime.Now;
+            }
+
+            await _context.SaveChangesAsync();
+            TempData["RatingSuccess"] = "Cảm ơn bạn đã đánh giá công thức.";
+
+            return RedirectToAction(nameof(Details), new { id = postId });
         }
 
         [HttpPost]

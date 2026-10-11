@@ -254,6 +254,41 @@ textarea {
     font-weight: 700;
 }
 
+.rating-form,
+.rating-login {
+    border: 1px solid rgba(200, 90, 59, 0.12);
+}
+
+.rating-stars-display {
+    color: #D89B24;
+    font-size: 1.25rem;
+    letter-spacing: 0;
+}
+
+.rating-options {
+    display: inline-flex;
+    flex-direction: row-reverse;
+    gap: 0.35rem;
+}
+
+.rating-star-option {
+    color: #C9BFB7;
+    cursor: pointer;
+    font-size: 2rem;
+    line-height: 1;
+    transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.rating-star-option:hover,
+.rating-star-option:hover ~ .rating-star-option,
+.rating-options .btn-check:checked ~ .rating-star-option {
+    color: #D89B24;
+}
+
+.rating-star-option:hover {
+    transform: translateY(-1px);
+}
+
 .comment-form,
 .comment-item,
 .comment-empty,

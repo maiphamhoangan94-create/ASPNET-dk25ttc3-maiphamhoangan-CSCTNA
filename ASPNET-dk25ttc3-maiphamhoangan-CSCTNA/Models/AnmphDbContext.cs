@@ -21,9 +21,26 @@ public partial class AnmphDbContext : DbContext
     public DbSet<Province> Provinces { get; set; }
     public DbSet<PostProvince> PostProvinces { get; set; }
     public DbSet<PostComment> PostComments { get; set; }
+    public DbSet<PostRating> PostRatings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder trinhTaoModel)
     {
+        trinhTaoModel.Entity<PostRating>()
+            .HasIndex(rating => new { rating.PostId, rating.UserId })
+            .IsUnique();
+
+        trinhTaoModel.Entity<PostRating>()
+            .HasOne(rating => rating.Post)
+            .WithMany(post => post.Ratings)
+            .HasForeignKey(rating => rating.PostId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        trinhTaoModel.Entity<PostRating>()
+            .HasOne(rating => rating.User)
+            .WithMany(user => user.Ratings)
+            .HasForeignKey(rating => rating.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         trinhTaoModel.Entity<PostComment>()
             .HasOne(comment => comment.Post)
             .WithMany(post => post.Comments)
