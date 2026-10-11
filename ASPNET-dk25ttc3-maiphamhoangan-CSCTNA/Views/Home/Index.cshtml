@@ -1,10 +1,12 @@
-@model IEnumerable<ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.Post>
+@model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.HomeIndexViewModel
 
 @{
     ViewData["Title"] = "Trang chủ";
 
-    var tasteCategories = ViewBag.TasteCategories as IEnumerable<Category> ?? Enumerable.Empty<Category>();
-    var suggestedPosts = Model?.Take(4).ToList() ?? new List<Post>();
+    var tasteCategories = Model.TasteCategories;
+    var suggestedPosts = Model.SuggestedPosts;
+    var featuredKitchen = Model.FeaturedKitchenCorner;
+    var featuredRecipe = Model.FeaturedRecipe;
     const string categoryFallbackImage = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400";
 }
 
@@ -173,37 +175,53 @@
     </div>
 </section>
 
-<section class="py-5 bg-warm">
-    <div class="container py-4">
-        <div class="row align-items-center g-5">
-            <div class="col-lg-5">
-                <div class="rounded-5 overflow-hidden shadow">
-                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=600" class="img-fluid w-100" alt="Bà Nội Sáu">
-                </div>
-            </div>
-            <div class="col-lg-7">
-                <span class="text-uppercase tracking-wider text-muted small fw-semibold">GÓC BẾP ƯU TÚ THÁNG NÀY</span>
-                <h2 class="font-serif display-6 fw-bold text-dark mt-1 mb-3">Bà Nội Sáu & Góc Bếp Miền Tây</h2>
-                <p class="text-secondary mb-4">
-                    Gắn bó hơn 40 năm với gian bếp củi vùng sông nước, Bà Nội Sáu mang đến những công thức món ăn mặn mòi vị phù sa, chân chất mà đậm đà tình thân.
-                </p>
-                <div class="card border-0 rounded-4 p-3 mb-4 bg-white shadow-sm">
-                    <div class="d-flex align-items-center gap-3">
-                        <img src="https://images.unsplash.com/photo-1512058564366-18510be2db19?w=100" class="rounded-3 object-fit-cover" width="60" height="60" alt="Món tiêu biểu">
-                        <div>
-                            <span class="badge bg-terracotta-light text-terracotta mb-1">Món Nổi Bật Của Gian Bếp</span>
-                            <h6 class="fw-bold text-dark mb-0">Cá Lóc Kho Tộ Đốt Niêu Đất Sông Mê Kông</h6>
-                        </div>
+@if (featuredKitchen != null)
+{
+    var kitchenAuthorName = featuredKitchen.User?.FullName ?? featuredKitchen.User?.Username ?? "Thành viên Bếp Nhà";
+    var kitchenImage = featuredKitchen.GalleryImages.FirstOrDefault()
+        ?? featuredKitchen.ImageUrl
+        ?? "https://images.unsplash.com/photo-1556911220-bff31c812dba?w=900";
+    var kitchenDescription = string.IsNullOrWhiteSpace(featuredKitchen.Content)
+        ? $"Gian bếp của {kitchenAuthorName} đang được cộng đồng yêu thích nhờ điểm sao cao và các món ăn được đánh giá nổi bật."
+        : featuredKitchen.Content;
+
+    <section class="py-5 bg-warm">
+        <div class="container py-4">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-5">
+                    <div class="rounded-5 overflow-hidden shadow">
+                        <img src="@kitchenImage" class="img-fluid w-100 object-fit-cover" style="max-height: 520px;" alt="@featuredKitchen.Title">
                     </div>
                 </div>
-                <div class="d-flex gap-3">
-                    <a href="#" class="btn btn-terracotta rounded-pill px-4">Ghé thăm gian bếp này</a>
-                    <a href="#" class="btn btn-outline-secondary rounded-pill px-4">Khám phá góc bếp khác</a>
+                <div class="col-lg-7">
+                    <span class="text-uppercase tracking-wider text-muted small fw-semibold">GÓC BẾP ƯU TÚ THÁNG NÀY</span>
+                    <h2 class="font-serif display-6 fw-bold text-dark mt-1 mb-3">@featuredKitchen.Title</h2>
+                    <div class="d-flex flex-wrap gap-3 text-muted small mb-3">
+                        <span><i class="fa-solid fa-star text-terracotta me-1"></i>@Model.FeaturedKitchenAverageRating.ToString("0.0") sao góc bếp</span>
+                        <span><i class="fa-solid fa-utensils text-terracotta me-1"></i>@Model.FeaturedAuthorRecipeAverageRating.ToString("0.0") sao trung bình món ăn</span>
+                    </div>
+                    <p class="text-secondary mb-4">@kitchenDescription</p>
+                    @if (featuredRecipe != null)
+                    {
+                        <div class="card border-0 rounded-4 p-3 mb-4 bg-white shadow-sm">
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="@(string.IsNullOrWhiteSpace(featuredRecipe.ImageUrl) ? "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=100" : featuredRecipe.ImageUrl)" class="rounded-3 object-fit-cover" width="60" height="60" alt="@featuredRecipe.Title">
+                                <div>
+                                    <span class="badge bg-terracotta-light text-terracotta mb-1">Món Nổi Bật Của Gian Bếp · @Model.FeaturedRecipeAverageRating.ToString("0.0") sao</span>
+                                    <h6 class="fw-bold text-dark mb-0">@featuredRecipe.Title</h6>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="d-flex gap-3">
+                        <a asp-controller="KitchenCorners" asp-action="Details" asp-route-id="@featuredKitchen.Id" class="btn btn-terracotta rounded-pill px-4">Ghé thăm gian bếp này</a>
+                        <a asp-controller="KitchenCorners" asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">Khám phá góc bếp khác</a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+}
 
 <section class="py-5 bg-white">
     <div class="container py-4">
@@ -219,7 +237,7 @@
                         "Từ ngày biết Bếp Nhà, mình không còn phải đau đầu nghĩ xem 'Hôm nay ăn gì' nữa. Các công thức chuẩn vị và rất dễ làm theo!"
                     </p>
                     <div class="d-flex align-items-center gap-3 mt-auto">
-                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" class="rounded-circle" width="40" height="40" alt="Avatar">
+                        <span class="rounded-circle bg-secondary-subtle d-inline-block flex-shrink-0" style="width: 40px; height: 40px;" aria-hidden="true"></span>
                         <div>
                             <h6 class="fw-bold mb-0 text-dark small">Thảo My</h6>
                             <small class="text-muted extra-small">Hà Nội, Việt Nam</small>
@@ -233,7 +251,7 @@
                         "Xa quê hương bao nhiêu năm, nhờ Bếp Nhà mà mình tìm lại được chính xác hương vị canh chua cá lóc ngày xưa mẹ nấu."
                     </p>
                     <div class="d-flex align-items-center gap-3 mt-auto">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100" class="rounded-circle" width="40" height="40" alt="Avatar">
+                        <span class="rounded-circle bg-secondary-subtle d-inline-block flex-shrink-0" style="width: 40px; height: 40px;" aria-hidden="true"></span>
                         <div>
                             <h6 class="fw-bold mb-0 text-dark small">Minh Cường</h6>
                             <small class="text-muted extra-small">Tokyo, Nhật Bản</small>
@@ -247,7 +265,7 @@
                         "Giao diện đẹp, dễ tìm kiếm và hình ảnh món ăn rất truyền cảm hứng. Một trang web không thể thiếu cho hội yêu bếp!"
                     </p>
                     <div class="d-flex align-items-center gap-3 mt-auto">
-                        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100" class="rounded-circle" width="40" height="40" alt="Avatar">
+                        <span class="rounded-circle bg-secondary-subtle d-inline-block flex-shrink-0" style="width: 40px; height: 40px;" aria-hidden="true"></span>
                         <div>
                             <h6 class="fw-bold mb-0 text-dark small">Lê Ngọc Anh</h6>
                             <small class="text-muted extra-small">Đà Nẵng, Việt Nam</small>

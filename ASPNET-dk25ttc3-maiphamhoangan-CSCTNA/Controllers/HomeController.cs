@@ -26,16 +26,78 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
                 .AsNoTracking()
                 .Include(post => post.Category)
                 .Include(post => post.User)
+                .Include(post => post.Ratings)
                 .Include(post => post.PostProvinces)
                     .ThenInclude(postProvince => postProvince.Province)
                 .Where(post => post.Status == 1 && post.PostType == PostTypes.Recipe)
                 .OrderByDescending(post => post.CreatedAt)
-                .Take(8)
                 .ToList();
 
-            ViewBag.TasteCategories = tasteCategories;
+            var kitchenCorners = _context.Posts
+                .AsNoTracking()
+                .Include(post => post.User)
+                .Include(post => post.Ratings)
+                .Where(post => post.Status == 1 && post.PostType == PostTypes.KitchenCorner)
+                .ToList();
 
-            return View(approvedPosts);
+            var authorRecipeRatings = approvedPosts
+                .Where(post => post.Ratings.Any())
+                .GroupBy(post => post.UserId)
+                .ToDictionary(
+                    group => group.Key,
+                    group => new
+                    {
+                        AverageRating = group.SelectMany(post => post.Ratings).Average(rating => rating.Score),
+                        RatingCount = group.SelectMany(post => post.Ratings).Count()
+                    });
+
+            var featuredKitchen = kitchenCorners
+                .Select(post =>
+                {
+                    var kitchenAverageRating = post.Ratings.Any()
+                        ? post.Ratings.Average(rating => rating.Score)
+                        : 0;
+                    var authorRating = authorRecipeRatings.TryGetValue(post.UserId, out var rating)
+                        ? rating
+                        : null;
+
+                    return new
+                    {
+                        KitchenCorner = post,
+                        KitchenAverageRating = kitchenAverageRating,
+                        KitchenRatingCount = post.Ratings.Count,
+                        AuthorRecipeAverageRating = authorRating?.AverageRating ?? 0,
+                        AuthorRecipeRatingCount = authorRating?.RatingCount ?? 0
+                    };
+                })
+                .OrderByDescending(item => item.KitchenAverageRating + item.AuthorRecipeAverageRating)
+                .ThenByDescending(item => item.KitchenRatingCount + item.AuthorRecipeRatingCount)
+                .ThenByDescending(item => item.KitchenCorner.CreatedAt)
+                .FirstOrDefault();
+
+            var featuredRecipe = featuredKitchen == null
+                ? null
+                : approvedPosts
+                    .Where(post => post.UserId == featuredKitchen.KitchenCorner.UserId)
+                    .OrderByDescending(post => post.Ratings.Any() ? post.Ratings.Average(rating => rating.Score) : 0)
+                    .ThenByDescending(post => post.Ratings.Count)
+                    .ThenByDescending(post => post.CreatedAt)
+                    .FirstOrDefault();
+
+            var viewModel = new HomeIndexViewModel
+            {
+                TasteCategories = tasteCategories,
+                SuggestedPosts = approvedPosts.Take(4).ToList(),
+                FeaturedKitchenCorner = featuredKitchen?.KitchenCorner,
+                FeaturedRecipe = featuredRecipe,
+                FeaturedKitchenAverageRating = featuredKitchen?.KitchenAverageRating ?? 0,
+                FeaturedRecipeAverageRating = featuredRecipe?.Ratings.Any() == true
+                    ? featuredRecipe.Ratings.Average(rating => rating.Score)
+                    : 0,
+                FeaturedAuthorRecipeAverageRating = featuredKitchen?.AuthorRecipeAverageRating ?? 0
+            };
+
+            return View(viewModel);
         }
 
         [HttpGet]

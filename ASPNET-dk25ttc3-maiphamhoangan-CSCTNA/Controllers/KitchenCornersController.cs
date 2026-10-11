@@ -50,7 +50,26 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
                 return NotFound();
             }
 
-            return View(post);
+            var sharedRecipes = _context.Posts
+                .AsNoTracking()
+                .Include(item => item.Category)
+                .Include(item => item.User)
+                .Include(item => item.PostProvinces)
+                    .ThenInclude(postProvince => postProvince.Province)
+                .Where(item => item.UserId == post.UserId
+                    && item.Status == 1
+                    && item.PostType == PostTypes.Recipe)
+                .OrderByDescending(item => item.CreatedAt)
+                .Take(4)
+                .ToList();
+
+            var viewModel = new KitchenCornerDetailsViewModel
+            {
+                KitchenCorner = post,
+                SharedRecipes = sharedRecipes
+            };
+
+            return View(viewModel);
         }
 
         [HttpGet]
