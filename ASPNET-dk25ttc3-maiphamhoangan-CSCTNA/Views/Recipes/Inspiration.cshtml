@@ -1,0 +1,122 @@
+@model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.IngredientSuggestionViewModel
+
+@{
+    ViewData["Title"] = "Cảm hứng món ngon";
+    const string fallbackImage = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600";
+    var selectedSet = Model.SelectedIngredients.ToHashSet(StringComparer.OrdinalIgnoreCase);
+}
+
+<section class="recipe-list-hero bg-warm py-5">
+    <div class="container py-4">
+        <div class="row align-items-end g-4">
+            <div class="col-lg-8">
+                <span class="text-uppercase tracking-wider text-muted small fw-semibold">CẢM HỨNG TỪ NGUYÊN LIỆU</span>
+                <h1 class="font-serif display-5 fw-bold text-dark mt-2 mb-3">Bạn đang có gì trong bếp?</h1>
+                <p class="text-secondary mb-0">
+                    Chọn các nguyên liệu hiện có, Bếp Nhà sẽ so sánh với công thức đã duyệt và gợi ý món phù hợp nhất.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-white">
+    <div class="container py-4">
+        <form method="get" asp-controller="Recipes" asp-action="Inspiration" class="ingredient-suggestion-panel p-4 p-md-5 mb-5">
+            <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
+                <div>
+                    <h2 class="h4 fw-bold text-dark mb-1">Chọn nguyên liệu</h2>
+                    <p class="text-secondary mb-0">Danh sách được lấy từ các công thức đang có trong thư viện.</p>
+                </div>
+                <div class="d-flex gap-2 align-items-start">
+                    <button type="submit" class="btn btn-terracotta rounded-pill px-4">
+                        <i class="fa-solid fa-magnifying-glass me-1"></i>Gợi ý món
+                    </button>
+                    <a asp-controller="Recipes" asp-action="Inspiration" class="btn btn-outline-secondary rounded-pill px-4">Xóa chọn</a>
+                </div>
+            </div>
+
+            @if (Model.AvailableIngredients.Any())
+            {
+                <div class="ingredient-picker">
+                    @foreach (var ingredient in Model.AvailableIngredients)
+                    {
+                        var inputId = $"ingredient-{ingredient.GetHashCode()}";
+                        <input class="btn-check" type="checkbox" name="ingredients" value="@ingredient" id="@inputId" checked="@selectedSet.Contains(ingredient)" />
+                        <label class="ingredient-chip" for="@inputId">@ingredient</label>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="recipe-empty rounded-4 p-4 text-center">
+                    <h2 class="h5 fw-bold text-dark">Chưa có nguyên liệu để gợi ý</h2>
+                    <p class="text-secondary mb-0">Khi có công thức được duyệt kèm phần nguyên liệu, danh sách sẽ xuất hiện tại đây.</p>
+                </div>
+            }
+        </form>
+
+        @if (Model.SelectedIngredients.Any())
+        {
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <span class="text-uppercase tracking-wider text-muted small fw-semibold">KẾT QUẢ PHÙ HỢP</span>
+                    <h2 class="h3 fw-bold text-dark mb-0">Gợi ý cho nguyên liệu bạn chọn</h2>
+                </div>
+                <span class="text-muted small">@Model.Suggestions.Count món phù hợp</span>
+            </div>
+
+            @if (Model.Suggestions.Any())
+            {
+                <div class="row g-4">
+                    @foreach (var suggestion in Model.Suggestions)
+                    {
+                        var recipe = suggestion.Recipe;
+                        <div class="col-md-6 col-lg-4">
+                            <article class="card card-recipe h-100 border-0 rounded-4 shadow-sm overflow-hidden">
+                                <a asp-controller="Recipes" asp-action="Details" asp-route-id="@recipe.Id" class="text-decoration-none">
+                                    <img src="@(string.IsNullOrWhiteSpace(recipe.ImageUrl) ? fallbackImage : recipe.ImageUrl)" class="card-img-top recipe-img" alt="@recipe.Title">
+                                </a>
+                                <div class="card-body p-4 d-flex flex-column">
+                                    <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
+                                        <span class="badge bg-light text-terracotta border">@(recipe.Category?.Name ?? "Công thức")</span>
+                                        <span class="match-score">@suggestion.MatchPercent%</span>
+                                    </div>
+                                    <h3 class="h5 fw-bold mb-3">
+                                        <a asp-controller="Recipes" asp-action="Details" asp-route-id="@recipe.Id" class="text-dark text-decoration-none">@recipe.Title</a>
+                                    </h3>
+                                    <div class="mb-3">
+                                        <div class="text-muted small fw-semibold mb-2">Nguyên liệu trùng</div>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            @foreach (var ingredient in suggestion.MatchedIngredients)
+                                            {
+                                                <span class="matched-chip">@ingredient</span>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="text-muted small mt-auto">
+                                        Còn thiếu khoảng @suggestion.MissingIngredientCount nguyên liệu trong công thức.
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="recipe-empty rounded-4 p-4 p-md-5 text-center">
+                    <h2 class="h4 fw-bold text-dark">Chưa tìm thấy công thức phù hợp</h2>
+                    <p class="text-secondary mb-0">Hãy thử chọn thêm hoặc đổi nguyên liệu khác để mở rộng gợi ý.</p>
+                </div>
+            }
+        }
+        else if (Model.AvailableIngredients.Any())
+        {
+            <div class="recipe-empty rounded-4 p-4 p-md-5 text-center">
+                <h2 class="h4 fw-bold text-dark">Chọn vài nguyên liệu để bắt đầu</h2>
+                <p class="text-secondary mb-0">Bạn có thể chọn một hoặc nhiều nguyên liệu, sau đó bấm “Gợi ý món”.</p>
+            </div>
+        }
+    </div>
+</section>

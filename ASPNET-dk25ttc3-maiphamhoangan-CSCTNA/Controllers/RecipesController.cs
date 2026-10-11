@@ -2,6 +2,9 @@ using ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
 {
@@ -74,6 +77,77 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
             }
 
             return View(recipe);
+        }
+
+        [HttpGet]
+        public IActionResult Inspiration([FromQuery] List<string>? ingredients)
+        {
+            var recipes = _context.Posts
+                .AsNoTracking()
+                .Include(post => post.Category)
+                .Include(post => post.User)
+                .Where(post => post.Status == 1 && post.PostType == PostTypes.Recipe)
+                .OrderByDescending(post => post.CreatedAt)
+                .ToList();
+
+            var recipeIngredients = recipes
+                .Select(recipe => new
+                {
+                    Recipe = recipe,
+                    Ingredients = ExtractIngredientNames(recipe.Content)
+                })
+                .Where(item => item.Ingredients.Any())
+                .ToList();
+
+            var availableIngredients = recipeIngredients
+                .SelectMany(item => item.Ingredients)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(ingredient => ingredient)
+                .ToList();
+
+            var selectedIngredients = (ingredients ?? new List<string>())
+                .Select(ingredient => ingredient.Trim())
+                .Where(ingredient => !string.IsNullOrWhiteSpace(ingredient))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            var selectedKeys = selectedIngredients
+                .Select(NormalizeIngredientKey)
+                .Where(key => !string.IsNullOrWhiteSpace(key))
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            var suggestions = selectedKeys.Any()
+                ? recipeIngredients
+                    .Select(item =>
+                    {
+                        var matchedIngredients = item.Ingredients
+                            .Where(ingredient => selectedKeys.Contains(NormalizeIngredientKey(ingredient)))
+                            .Distinct(StringComparer.OrdinalIgnoreCase)
+                            .ToList();
+
+                        return new RecipeIngredientSuggestion
+                        {
+                            Recipe = item.Recipe,
+                            RecipeIngredients = item.Ingredients,
+                            MatchedIngredients = matchedIngredients
+                        };
+                    })
+                    .Where(suggestion => suggestion.MatchedIngredients.Any())
+                    .OrderByDescending(suggestion => suggestion.MatchedIngredients.Count)
+                    .ThenBy(suggestion => suggestion.MissingIngredientCount)
+                    .ThenByDescending(suggestion => suggestion.Recipe.CreatedAt)
+                    .Take(12)
+                    .ToList()
+                : new List<RecipeIngredientSuggestion>();
+
+            var viewModel = new IngredientSuggestionViewModel
+            {
+                AvailableIngredients = availableIngredients,
+                SelectedIngredients = selectedIngredients,
+                Suggestions = suggestions
+            };
+
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -314,6 +388,79 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
             }
 
             return string.Join($"{Environment.NewLine}{Environment.NewLine}", sections);
+        }
+
+        private static List<string> ExtractIngredientNames(string? content)
+        {
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                return new List<string>();
+            }
+
+            var lines = content
+                .Replace("\r\n", "\n")
+                .Split('\n')
+                .Select(line => line.Trim())
+                .ToList();
+
+            var ingredients = new List<string>();
+            var isIngredientSection = false;
+
+            foreach (var line in lines)
+            {
+                if (line.StartsWith("##", StringComparison.Ordinal))
+                {
+                    isIngredientSection = line.Contains("Nguyên liệu", StringComparison.OrdinalIgnoreCase);
+                    continue;
+                }
+
+                if (!isIngredientSection || string.IsNullOrWhiteSpace(line))
+                {
+                    continue;
+                }
+
+                var ingredient = NormalizeIngredientDisplay(line);
+                if (!string.IsNullOrWhiteSpace(ingredient))
+                {
+                    ingredients.Add(ingredient);
+                }
+            }
+
+            return ingredients
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+        }
+
+        private static string NormalizeIngredientDisplay(string value)
+        {
+            var ingredient = value.Trim().TrimStart('-', '*', '+', '•').Trim();
+            ingredient = Regex.Replace(ingredient, @"^\d+[\.\)]\s*", string.Empty);
+
+            var dashIndex = ingredient.IndexOf(" - ", StringComparison.Ordinal);
+            if (dashIndex >= 0)
+            {
+                ingredient = ingredient[..dashIndex];
+            }
+
+            ingredient = Regex.Replace(ingredient, @"\s+", " ").Trim();
+            return ingredient;
+        }
+
+        private static string NormalizeIngredientKey(string value)
+        {
+            var normalized = NormalizeIngredientDisplay(value).ToLowerInvariant();
+            var formD = normalized.Normalize(NormalizationForm.FormD);
+            var builder = new StringBuilder();
+
+            foreach (var character in formD)
+            {
+                if (CharUnicodeInfo.GetUnicodeCategory(character) != UnicodeCategory.NonSpacingMark)
+                {
+                    builder.Append(character);
+                }
+            }
+
+            return Regex.Replace(builder.ToString().Normalize(NormalizationForm.FormC), @"[^a-z0-9]+", " ").Trim();
         }
     }
 }

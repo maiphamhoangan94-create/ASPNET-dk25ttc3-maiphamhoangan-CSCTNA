@@ -1,3 +1,15 @@
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    var isHomeActive = string.Equals(currentController, "Home", StringComparison.OrdinalIgnoreCase)
+        && string.Equals(currentAction, "Index", StringComparison.OrdinalIgnoreCase);
+    var isInspirationActive = string.Equals(currentController, "Recipes", StringComparison.OrdinalIgnoreCase)
+        && string.Equals(currentAction, "Inspiration", StringComparison.OrdinalIgnoreCase);
+    var isProvinceActive = string.Equals(currentController, "Home", StringComparison.OrdinalIgnoreCase)
+        && string.Equals(currentAction, "ExploreProvinces", StringComparison.OrdinalIgnoreCase);
+    var isKitchenActive = string.Equals(currentController, "KitchenCorners", StringComparison.OrdinalIgnoreCase);
+}
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -20,10 +32,10 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link px-3 active" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-                    <li class="nav-item"><a class="nav-link px-3" href="#">Cảm hứng</a></li>
-                    <li class="nav-item"><a class="nav-link px-3" asp-controller="Home" asp-action="ExploreProvinces">Khám phá Tỉnh thành</a></li>
-                    <li class="nav-item"><a class="nav-link px-3" asp-controller="KitchenCorners" asp-action="Index">Góc Bếp Ưu Tú</a></li>
+                    <li class="nav-item"><a class="nav-link px-3 @(isHomeActive ? "active" : string.Empty)" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                    <li class="nav-item"><a class="nav-link px-3 @(isInspirationActive ? "active" : string.Empty)" asp-controller="Recipes" asp-action="Inspiration">Cảm hứng</a></li>
+                    <li class="nav-item"><a class="nav-link px-3 @(isProvinceActive ? "active" : string.Empty)" asp-controller="Home" asp-action="ExploreProvinces">Khám phá Tỉnh thành</a></li>
+                    <li class="nav-item"><a class="nav-link px-3 @(isKitchenActive ? "active" : string.Empty)" asp-controller="KitchenCorners" asp-action="Index">Góc Bếp Ưu Tú</a></li>
                 </ul>
                 <div class="d-flex align-items-center gap-3">
                     @if (Context.Session.GetInt32("UserId") != null)
