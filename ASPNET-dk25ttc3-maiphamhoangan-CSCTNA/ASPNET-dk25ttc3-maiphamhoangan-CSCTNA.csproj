@@ -26,6 +26,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="artifacts\**" />
+    <Content Remove="artifacts\**" />
+    <EmbeddedResource Remove="artifacts\**" />
+    <None Remove="artifacts\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Update="Views\**\*.cshtml" CopyToOutputDirectory="PreserveNewest" />
     <Content Update="Areas\**\Views\**\*.cshtml" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

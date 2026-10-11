@@ -117,6 +117,70 @@ textarea {
     object-fit: cover;
 }
 
+.province-hero {
+    border-bottom: 1px solid rgba(200, 90, 59, 0.12);
+}
+
+.province-stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: 1px solid rgba(200, 90, 59, 0.18);
+    border-radius: 999px;
+    background: #FFFFFF;
+    color: #6D625C;
+    padding: 0.65rem 1rem;
+}
+
+.province-stat strong {
+    color: var(--terracotta);
+    font-size: 1.15rem;
+}
+
+.province-filter {
+    border: 1px solid rgba(200, 90, 59, 0.12);
+    border-radius: 24px;
+    padding: 1.5rem;
+}
+
+.province-filter .form-select {
+    border-color: #E8DED6;
+    padding: 0.75rem 1rem;
+}
+
+.province-filter .form-select:focus {
+    border-color: var(--terracotta);
+    box-shadow: 0 0 0 0.2rem rgba(200, 90, 59, 0.14);
+}
+
+.province-group {
+    padding: 2rem 0;
+    border-top: 1px solid rgba(68, 61, 57, 0.1);
+}
+
+.province-group:first-child {
+    border-top: 0;
+    padding-top: 0;
+}
+
+.province-recipe-img {
+    height: 220px;
+    object-fit: cover;
+}
+
+.province-card-content {
+    display: -webkit-box;
+    min-height: 3rem;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.province-empty {
+    border: 1px dashed rgba(200, 90, 59, 0.28);
+    background: var(--bg-warm);
+}
+
 .recipe-detail-hero {
     border-bottom: 1px solid rgba(200, 90, 59, 0.12);
 }

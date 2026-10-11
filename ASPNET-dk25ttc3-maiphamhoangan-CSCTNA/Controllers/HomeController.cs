@@ -38,6 +38,55 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
             return View(approvedPosts);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ExploreProvinces(int? provinceId)
+        {
+            var provinces = await _context.Provinces
+                .AsNoTracking()
+                .OrderBy(province => province.Name)
+                .ToListAsync();
+
+            var approvedPosts = await _context.Posts
+                .AsNoTracking()
+                .Include(post => post.Category)
+                .Include(post => post.User)
+                .Include(post => post.PostProvinces)
+                    .ThenInclude(postProvince => postProvince.Province)
+                .Where(post => post.Status == 1)
+                .OrderByDescending(post => post.CreatedAt)
+                .ToListAsync();
+
+            if (provinceId.HasValue && !provinces.Any(province => province.Id == provinceId.Value))
+            {
+                provinceId = null;
+            }
+
+            var provinceGroups = provinces
+                .Select(province => new ProvinceFoodGroup
+                {
+                    Province = province,
+                    Posts = approvedPosts
+                        .Where(post => post.PostProvinces.Any(postProvince => postProvince.ProvinceId == province.Id))
+                        .Take(6)
+                        .ToList()
+                })
+                .Where(group => !provinceId.HasValue || group.Province.Id == provinceId.Value)
+                .ToList();
+
+            var viewModel = new ProvinceExploreViewModel
+            {
+                ProvinceGroups = provinceGroups,
+                SelectedProvinceId = provinceId,
+                SelectedProvinceName = provinceGroups.FirstOrDefault()?.Province.Name,
+                TotalProvinceCount = provinces.Count,
+                TotalRecipeCount = approvedPosts.Count(post => post.PostProvinces.Any())
+            };
+
+            ViewBag.Provinces = provinces;
+
+            return View(viewModel);
+        }
+
         public IActionResult Privacy()
         {
             return View();
