@@ -52,7 +52,7 @@ if (!ungDung.Environment.IsDevelopment())
     ungDung.UseHsts();
 }
 
-ungDung.UseHttpsRedirection();
+//ungDung.UseHttpsRedirection();
 ungDung.UseStaticFiles();
 ungDung.UseRouting();
 

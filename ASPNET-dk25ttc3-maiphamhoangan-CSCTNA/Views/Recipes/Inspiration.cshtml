@@ -1,4 +1,4 @@
-@model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.IngredientSuggestionViewModel
+﻿@model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.IngredientSuggestionViewModel
 
 @{
     ViewData["Title"] = "Cảm hứng món ngon";
@@ -26,7 +26,7 @@
             <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
                 <div>
                     <h2 class="h4 fw-bold text-dark mb-1">Chọn nguyên liệu</h2>
-                    <p class="text-secondary mb-0">Danh sách được lấy từ các công thức đang có trong thư viện.</p>
+                    <p class="text-secondary mb-0">Nguyên liệu xuất hiện trong nhiều công thức đã duyệt nhất được hiển thị trước.</p>
                 </div>
                 <div class="d-flex gap-2 align-items-start">
                     <button type="submit" class="btn btn-terracotta rounded-pill px-4">
@@ -39,11 +39,12 @@
             @if (Model.AvailableIngredients.Any())
             {
                 <div class="ingredient-picker">
-                    @foreach (var ingredient in Model.AvailableIngredients)
+                    @foreach (var usage in Model.IngredientUsage)
                     {
-                        var inputId = $"ingredient-{ingredient.GetHashCode()}";
+                        var ingredient = usage.Name;
+                        var inputId = $"ingredient-{Model.IngredientUsage.IndexOf(usage)}";
                         <input class="btn-check" type="checkbox" name="ingredients" value="@ingredient" id="@inputId" checked="@selectedSet.Contains(ingredient)" />
-                        <label class="ingredient-chip" for="@inputId">@ingredient</label>
+                        <label class="ingredient-chip" for="@inputId">@ingredient <span class="small text-muted">(@usage.Count)</span></label>
                     }
                 </div>
             }

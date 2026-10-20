@@ -1,4 +1,4 @@
-using ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models;
+﻿using ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -115,11 +115,8 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
                 .Where(item => item.Ingredients.Any())
                 .ToList();
 
-            var availableIngredients = recipeIngredients
-                .SelectMany(item => item.Ingredients)
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-                .OrderBy(ingredient => ingredient)
-                .ToList();
+            var ingredientUsage = CountIngredientUsage(recipeIngredients.Select(item => item.Ingredients));
+            var availableIngredients = ingredientUsage.Select(item => item.Name).ToList();
 
             var selectedIngredients = (ingredients ?? new List<string>())
                 .Select(ingredient => ingredient.Trim())
@@ -159,7 +156,9 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
             var viewModel = new IngredientSuggestionViewModel
             {
                 AvailableIngredients = availableIngredients,
-                SelectedIngredients = selectedIngredients,
+                SelectedIngredients = availableIngredients
+                    .Where(name => selectedKeys.Contains(NormalizeIngredientKey(name))).ToList(),
+                IngredientUsage = ingredientUsage,
                 Suggestions = suggestions
             };
 
@@ -294,6 +293,7 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
 
             LoadCategories();
             LoadProvinces();
+            LoadIngredientSuggestions();
             return View(new Post());
         }
 
@@ -328,6 +328,7 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
             {
                 LoadCategories(recipe.CategoryId);
                 LoadProvinces(recipe.SelectedProvinceIds);
+                LoadIngredientSuggestions();
                 return View(recipe);
             }
 
@@ -348,6 +349,31 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
 
             TempData["RecipeCreatedMessage"] = "Công thức của bạn đã được gửi và đang chờ duyệt.";
             return RedirectToAction(nameof(Create));
+        }
+
+        private void LoadIngredientSuggestions()
+        {
+            var contents = _context.Posts.AsNoTracking()
+                .Where(post => post.Status == 1 && post.PostType == PostTypes.Recipe)
+                .Select(post => post.Content).ToList();
+            ViewBag.IngredientSuggestions = CountIngredientUsage(contents.Select(ExtractIngredientNames));
+        }
+
+        private static List<IngredientUsage> CountIngredientUsage(IEnumerable<List<string>> recipes)
+        {
+            return recipes.SelectMany(names => names
+                    .Where(name => !string.IsNullOrWhiteSpace(NormalizeIngredientKey(name)))
+                    .DistinctBy(NormalizeIngredientKey))
+                .GroupBy(NormalizeIngredientKey)
+                .Select(group => new IngredientUsage
+                {
+                    Name = group.GroupBy(name => name)
+                        .OrderByDescending(names => names.Count())
+                        .ThenBy(names => names.Key, StringComparer.Ordinal).First().Key,
+                    Count = group.Count()
+                })
+                .OrderByDescending(item => item.Count)
+                .ThenBy(item => item.Name, StringComparer.OrdinalIgnoreCase).ToList();
         }
 
         private bool IsLoggedIn()
@@ -443,7 +469,7 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
             }
 
             return ingredients
-                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .DistinctBy(NormalizeIngredientKey)
                 .ToList();
         }
 
@@ -458,13 +484,14 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
                 ingredient = ingredient[..dashIndex];
             }
 
+            ingredient = Regex.Replace(ingredient, @"\s*\([^()]*\)\s*$", string.Empty);
             ingredient = Regex.Replace(ingredient, @"\s+", " ").Trim();
             return ingredient;
         }
 
         private static string NormalizeIngredientKey(string value)
         {
-            var normalized = NormalizeIngredientDisplay(value).ToLowerInvariant();
+            var normalized = NormalizeIngredientDisplay(value).ToLowerInvariant().Replace('đ', 'd');
             var formD = normalized.Normalize(NormalizationForm.FormD);
             var builder = new StringBuilder();
 

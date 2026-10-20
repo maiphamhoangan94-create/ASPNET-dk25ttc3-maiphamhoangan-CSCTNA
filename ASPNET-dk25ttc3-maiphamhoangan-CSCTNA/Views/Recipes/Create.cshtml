@@ -1,4 +1,4 @@
-@model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.Post
+﻿@model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.Post
 
 @{
     ViewData["Title"] = "Đăng công thức";
@@ -56,7 +56,10 @@
                         <div class="ingredient-entry rounded-4 p-3">
                             <div id="ingredientRows" class="vstack gap-2">
                                 <div class="ingredient-row">
-                                    <input type="text" class="form-control ingredient-name" placeholder="Tên nguyên liệu" aria-label="Tên nguyên liệu" />
+                                    <div class="position-relative">
+                        <input type="text" class="form-control ingredient-name" placeholder="Tên nguyên liệu" aria-label="Tên nguyên liệu" autocomplete="off" aria-expanded="false" />
+                        <div class="ingredient-options position-absolute bg-white border rounded shadow-sm w-100" style="z-index: 10; max-height: 240px; overflow-y: auto" hidden></div>
+                    </div>
                                     <input type="text" class="form-control ingredient-amount" placeholder="Lượng" aria-label="Lượng nguyên liệu" />
                                     <input type="text" class="form-control ingredient-note" placeholder="Ghi chú" aria-label="Ghi chú nguyên liệu" />
                                     <button type="button" class="btn btn-outline-secondary ingredient-remove" aria-label="Xóa nguyên liệu">
@@ -68,7 +71,7 @@
                                 <button type="button" class="btn btn-outline-terracotta rounded-pill px-3" id="addIngredientRow">
                                     <i class="fa-solid fa-plus me-1"></i>Thêm nguyên liệu
                                 </button>
-                                <span class="text-muted small">Mỗi dòng sẽ tự chuyển thành một nguyên liệu trong công thức.</span>
+                                <span class="text-muted small">Nhập tên để chọn nguyên liệu đã có hoặc thêm nguyên liệu mới.</span>
                             </div>
                         </div>
                         <span asp-validation-for="Ingredients" class="text-danger small"></span>
@@ -102,11 +105,65 @@
                 return;
             }
 
+            const ingredientSuggestions = @Json.Serialize(ViewBag.IngredientSuggestions);
+            const normalizeName = value => value.toLowerCase().normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/\s+/g, ' ').trim();
+            const hideOptions = () => {
+                rowsContainer.querySelectorAll('.ingredient-options').forEach(panel => panel.hidden = true);
+                rowsContainer.querySelectorAll('.ingredient-name').forEach(input => input.setAttribute('aria-expanded', 'false'));
+            };
+            const showOptions = input => {
+                hideOptions();
+                const panel = input.parentElement.querySelector('.ingredient-options');
+                const query = normalizeName(input.value);
+                const matches = ingredientSuggestions.filter(item => normalizeName(item.name).includes(query)).slice(0, 8);
+                panel.replaceChildren();
+                matches.forEach(item => {
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'btn btn-light text-start w-100 rounded-0';
+                    button.textContent = `${item.name} (${item.count} công thức)`;
+                    button.addEventListener('click', () => {
+                        input.value = item.name;
+                        syncIngredients();
+                        input.focus();
+                        hideOptions();
+                    });
+                    panel.appendChild(button);
+                });
+                panel.hidden = matches.length === 0;
+                input.setAttribute('aria-expanded', String(matches.length > 0));
+            };
+            rowsContainer.addEventListener('focusin', event => {
+                if (event.target.matches('.ingredient-name')) showOptions(event.target);
+            });
+            rowsContainer.addEventListener('input', event => {
+                if (event.target.matches('.ingredient-name')) showOptions(event.target);
+            });
+            rowsContainer.addEventListener('keydown', event => {
+                if (event.key === 'Escape') hideOptions();
+                if (event.key === 'ArrowDown' && event.target.matches('.ingredient-name')) {
+                    const first = event.target.parentElement.querySelector('.ingredient-options:not([hidden]) button');
+                    if (first) { event.preventDefault(); first.focus(); }
+                }
+            });
+            document.addEventListener('click', event => {
+                if (!event.target.closest('.ingredient-name, .ingredient-options')) hideOptions();
+            });
+            rowsContainer.addEventListener('focusout', () => {
+                setTimeout(() => {
+                    if (!document.activeElement?.closest('.ingredient-name, .ingredient-options')) hideOptions();
+                }, 0);
+            });
+
             const createRow = () => {
                 const row = document.createElement('div');
                 row.className = 'ingredient-row';
                 row.innerHTML = `
-                    <input type="text" class="form-control ingredient-name" placeholder="Tên nguyên liệu" aria-label="Tên nguyên liệu" />
+                    <div class="position-relative">
+                        <input type="text" class="form-control ingredient-name" placeholder="Tên nguyên liệu" aria-label="Tên nguyên liệu" autocomplete="off" aria-expanded="false" />
+                        <div class="ingredient-options position-absolute bg-white border rounded shadow-sm w-100" style="z-index: 10; max-height: 240px; overflow-y: auto" hidden></div>
+                    </div>
                     <input type="text" class="form-control ingredient-amount" placeholder="Lượng" aria-label="Lượng nguyên liệu" />
                     <input type="text" class="form-control ingredient-note" placeholder="Ghi chú" aria-label="Ghi chú nguyên liệu" />
                     <button type="button" class="btn btn-outline-secondary ingredient-remove" aria-label="Xóa nguyên liệu">
