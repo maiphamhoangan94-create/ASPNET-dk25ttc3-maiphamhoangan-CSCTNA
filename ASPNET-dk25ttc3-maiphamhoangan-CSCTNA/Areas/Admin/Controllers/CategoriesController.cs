@@ -1,3 +1,4 @@
+﻿using ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Services;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,10 +8,12 @@ using ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models;
 public class CategoriesController : Controller
 {
     private readonly AnmphDbContext _context;
+    private readonly ImageUploadService _imageUpload;
 
-    public CategoriesController(AnmphDbContext context)
+    public CategoriesController(AnmphDbContext context, ImageUploadService imageUpload)
     {
         _context = context;
+        _imageUpload = imageUpload;
     }
 
     // GET: CATEGORYS
@@ -48,10 +51,13 @@ public class CategoriesController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Create([Bind("Id,Name,Slug,ImageUrl,Posts")] Category danhMuc)
+    public IActionResult Create([Bind("Id,Name,Slug,Posts")] Category danhMuc, IFormFile? imageFile)
     {
+        _imageUpload.Validate(imageFile, ModelState);
+
         if (ModelState.IsValid)
         {
+            if (imageFile != null) danhMuc.ImageUrl = _imageUpload.Save(imageFile, "categories");
             _context.Add(danhMuc);
             _context.SaveChanges();
             return RedirectToAction(nameof(Index));
@@ -80,15 +86,21 @@ public class CategoriesController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Edit(int? id, [Bind("Id,Name,Slug,ImageUrl,Posts")] Category danhMuc)
+    public IActionResult Edit(int? id, [Bind("Id,Name,Slug,Posts")] Category danhMuc, IFormFile? imageFile)
     {
         if (id != danhMuc.Id)
         {
             return NotFound();
         }
 
+        _imageUpload.Validate(imageFile, ModelState);
+        var existing = _context.Categories.AsNoTracking().FirstOrDefault(item => item.Id == danhMuc.Id);
+        if (existing == null) return NotFound();
+        danhMuc.ImageUrl = existing.ImageUrl;
+
         if (ModelState.IsValid)
         {
+            if (imageFile != null) danhMuc.ImageUrl = _imageUpload.Save(imageFile, "categories");
             try
             {
                 _context.Update(danhMuc);

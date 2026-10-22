@@ -1,4 +1,4 @@
-@model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.Post
+﻿@model ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models.Post
 
 @{
     ViewData["Title"] = "Sửa bài viết";
@@ -12,7 +12,7 @@
         </div>
     </div>
     <div class="admin-card-body">
-        <form asp-action="Edit">
+        <form enctype="multipart/form-data" asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
             <input type="hidden" asp-for="Id" />
 
@@ -29,9 +29,15 @@
             </div>
 
             <div class="mb-3">
-                <label asp-for="ImageUrl" class="form-label">Ảnh đại diện</label>
-                <input asp-for="ImageUrl" class="form-control" />
-                <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                <label for="imageFile" class="form-label">Ảnh đại diện</label>
+                @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+                {
+                    <img src="@Model.ImageUrl" alt="Ảnh hiện tại" class="img-thumbnail d-block mb-2" style="max-height: 160px;" />
+                }
+                <div class="form-text mb-2">Để trống để giữ ảnh hiện tại.</div>
+                <input type="file" id="imageFile" name="imageFile" class="form-control" accept=".jpg,.jpeg,.png,.webp,.gif" />
+                <div class="form-text">Chọn ảnh JPG, PNG, WEBP hoặc GIF, tối đa 5 MB.</div>
+                @Html.ValidationMessage("imageFile", null, new { @class = "text-danger" })
             </div>
 
             <div class="mb-3">

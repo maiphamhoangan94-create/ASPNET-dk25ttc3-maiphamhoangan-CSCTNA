@@ -1,4 +1,4 @@
-using ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models;
+﻿using ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models;
 using Microsoft.EntityFrameworkCore;
 
 var trinhTaoWeb = WebApplication.CreateBuilder(args);
@@ -10,6 +10,7 @@ trinhTaoWeb.Services.AddDbContext<AnmphDbContext>(cauHinh =>
 
 // Add services to the container.
 trinhTaoWeb.Services.AddControllersWithViews();
+trinhTaoWeb.Services.AddScoped<ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Services.ImageUploadService>();
 trinhTaoWeb.Services.AddSession(cauHinh =>
 {
     cauHinh.IdleTimeout = TimeSpan.FromMinutes(30);

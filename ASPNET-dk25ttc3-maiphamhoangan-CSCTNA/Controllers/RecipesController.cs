@@ -1,4 +1,5 @@
-﻿using ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models;
+﻿using ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Services;
+using ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,10 +12,12 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
     public class RecipesController : Controller
     {
         private readonly AnmphDbContext _context;
+    private readonly ImageUploadService _imageUpload;
 
-        public RecipesController(AnmphDbContext context)
+        public RecipesController(AnmphDbContext context, ImageUploadService imageUpload)
         {
             _context = context;
+        _imageUpload = imageUpload;
         }
 
         [HttpGet]
@@ -310,7 +313,7 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Title,Ingredients,Content,ImageUrl,CategoryId,SelectedProvinceIds")] Post recipe)
+        public IActionResult Create([Bind("Title,Ingredients,Content,CategoryId,SelectedProvinceIds")] Post recipe, IFormFile? imageFile)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
@@ -335,6 +338,8 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
                 }
             }
 
+            _imageUpload.Validate(imageFile, ModelState);
+
             if (!ModelState.IsValid)
             {
                 LoadCategories(recipe.CategoryId);
@@ -343,6 +348,7 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
                 return View(recipe);
             }
 
+            if (imageFile != null) recipe.ImageUrl = _imageUpload.Save(imageFile, "recipes");
             recipe.UserId = userId.Value;
             recipe.PostType = PostTypes.Recipe;
             recipe.Status = 0;

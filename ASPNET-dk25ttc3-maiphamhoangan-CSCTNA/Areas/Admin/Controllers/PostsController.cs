@@ -1,3 +1,4 @@
+﻿using ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Services;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -8,10 +9,12 @@ using ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Models;
 public class PostsController : Controller
 {
     private readonly AnmphDbContext _context;
+    private readonly ImageUploadService _imageUpload;
 
-    public PostsController(AnmphDbContext context)
+    public PostsController(AnmphDbContext context, ImageUploadService imageUpload)
     {
         _context = context;
+        _imageUpload = imageUpload;
     }
 
     // GET: POSTS
@@ -108,10 +111,13 @@ public class PostsController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Create([Bind("Id,Title,Content,ImageUrl,Status,RejectionReason,CategoryId,Category,UserId,User,ApprovedBy,AdminApprover,ApprovedAt,CreatedAt,UpdatedAt,SelectedProvinceIds")] Post baiViet)
+    public IActionResult Create([Bind("Id,Title,Content,Status,RejectionReason,CategoryId,Category,UserId,User,ApprovedBy,AdminApprover,ApprovedAt,CreatedAt,UpdatedAt,SelectedProvinceIds")] Post baiViet, IFormFile? imageFile)
     {
+        _imageUpload.Validate(imageFile, ModelState);
+
         if (ModelState.IsValid)
         {
+            if (imageFile != null) baiViet.ImageUrl = _imageUpload.Save(imageFile, "recipes");
             baiViet.PostType = PostTypes.Recipe;
             _context.Add(baiViet);
             _context.SaveChanges();
@@ -149,15 +155,21 @@ public class PostsController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Edit(int? id, [Bind("Id,Title,Content,ImageUrl,Status,RejectionReason,CategoryId,Category,UserId,User,ApprovedBy,AdminApprover,ApprovedAt,CreatedAt,UpdatedAt,SelectedProvinceIds")] Post baiViet)
+    public IActionResult Edit(int? id, [Bind("Id,Title,Content,Status,RejectionReason,CategoryId,Category,UserId,User,ApprovedBy,AdminApprover,ApprovedAt,CreatedAt,UpdatedAt,SelectedProvinceIds")] Post baiViet, IFormFile? imageFile)
     {
         if (id != baiViet.Id)
         {
             return NotFound();
         }
 
+        _imageUpload.Validate(imageFile, ModelState);
+        var existing = _context.Posts.AsNoTracking().FirstOrDefault(item => item.Id == baiViet.Id);
+        if (existing == null) return NotFound();
+        baiViet.ImageUrl = existing.ImageUrl;
+
         if (ModelState.IsValid)
         {
+            if (imageFile != null) baiViet.ImageUrl = _imageUpload.Save(imageFile, "recipes");
             try
             {
                 baiViet.PostType = PostTypes.Recipe;
