@@ -66,7 +66,7 @@
                 <span class="text-uppercase tracking-wider text-muted small fw-semibold">KHÁM PHÁ THEO KHẨU VỊ</span>
                 <h2 class="font-serif fw-bold text-dark mt-1">Định nghĩa mâm cơm nhà bằng hương vị bạn yêu thích nhất</h2>
             </div>
-            <a href="#taste-categories" class="text-terracotta text-decoration-none fw-semibold small d-none d-md-inline">Xem tất cả hương vị →</a>
+            <a asp-controller="Recipes" asp-action="Categories" class="text-terracotta text-decoration-none fw-semibold small flex-shrink-0">Xem tất cả hương vị →</a>
         </div>
 
         <div class="row g-3" id="taste-categories">
@@ -77,7 +77,7 @@
                     var categoryImage = string.IsNullOrWhiteSpace(category.ImageUrl) ? categoryFallbackImage : category.ImageUrl;
 
                     <div class="col-6 col-md-4 col-lg-2-4">
-                        <a asp-controller="Recipes" asp-action="Index" asp-route-categoryId="@category.Id" class="card card-taste border-0 rounded-4 overflow-hidden text-white shadow-sm h-100 text-decoration-none">
+                        <a asp-controller="Recipes" asp-action="Index" asp-route-categoryId="@category.Id" class="card card-taste border-0 rounded-4 overflow-hidden text-white shadow-sm text-decoration-none">
                             <img src="@categoryImage" class="card-img h-100 object-fit-cover" alt="@category.Name">
                             <div class="card-img-overlay d-flex align-items-end p-3 bg-dark-gradient">
                                 <h6 class="card-title fw-bold mb-0">@category.Name</h6>

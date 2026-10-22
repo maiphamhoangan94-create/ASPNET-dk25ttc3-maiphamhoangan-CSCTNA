@@ -122,7 +122,7 @@
                     const button = document.createElement('button');
                     button.type = 'button';
                     button.className = 'btn btn-light text-start w-100 rounded-0';
-                    button.textContent = `${item.name} (${item.count} công thức)`;
+                    button.textContent = item.name;
                     button.addEventListener('click', () => {
                         input.value = item.name;
                         syncIngredients();

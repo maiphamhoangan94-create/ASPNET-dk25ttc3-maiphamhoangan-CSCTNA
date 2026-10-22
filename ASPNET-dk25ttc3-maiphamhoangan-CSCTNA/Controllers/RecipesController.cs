@@ -18,6 +18,17 @@ namespace ASPNET_dk25ttc3_maiphamhoangan_CSCTNA.Controllers
         }
 
         [HttpGet]
+        public IActionResult Categories()
+        {
+            var categories = _context.Categories
+                .AsNoTracking()
+                .OrderBy(category => category.Name)
+                .ToList();
+
+            return View(categories);
+        }
+
+        [HttpGet]
         public IActionResult Index(int? categoryId, int page = 1)
         {
             const int pageSize = 8;
