@@ -4,7 +4,7 @@
 
 ## Tác giả mã nguồn
 
-- Họ và tên: Mai Phạm Hoàng An.
+- Họ và tên: Mai Phạm Hoàng Ân.
 - Email: [anmph300894@tvu-onschool.edu.vn](mailto:anmph300894@tvu-onschool.edu.vn).
 - Số điện thoại: 0397241771.
 
