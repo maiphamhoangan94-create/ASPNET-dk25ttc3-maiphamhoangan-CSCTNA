@@ -29,13 +29,6 @@
 - Báo cáo tổng số công thức, góc bếp, người dùng, danh mục, bình luận, lượt đánh giá và điểm trung bình; thống kê bài theo trạng thái, danh mục và số bài trong 6 tháng gần nhất.
 - Tài khoản `Admin` được chuyển đến trang quản lý danh mục sau khi đăng nhập.
 
-### API danh mục
-
-| Phương thức | Đường dẫn | Kết quả |
-| --- | --- | --- |
-| GET | `/api/categories` | Danh sách danh mục gồm Id, Name, Slug |
-| GET | `/api/categories/{id}` | Chi tiết danh mục; 404 nếu không tồn tại |
-
 ## Cấu trúc repository
 
 ```text
@@ -43,7 +36,7 @@ README.md
 ASPNET-dk25ttc3-maiphamhoangan-CSCTNA.slnx
 ASPNET-dk25ttc3-maiphamhoangan-CSCTNA/
 ├── Areas/Admin/        # Controller và giao diện quản trị
-├── Controllers/        # Trang chủ, tài khoản, công thức, góc bếp, API
+├── Controllers/        # Trang chủ, tài khoản, công thức, góc bếp
 ├── Models/             # Entity, DbContext và ViewModel
 ├── Services/           # Xử lý tải ảnh
 ├── Views/              # Giao diện Razor
