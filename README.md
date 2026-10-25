@@ -2,6 +2,12 @@
 
 Đồ án ASP.NET Core MVC xây dựng website chia sẻ công thức, khám phá món ăn theo tỉnh thành và giới thiệu góc bếp. README được đối chiếu với mã nguồn và lịch sử commit đến `f6e5df9`.
 
+## Tác giả mã nguồn
+
+- Họ và tên: Mai Phạm Hoàng An.
+- Email: [anmph300894@tvu-onschool.edu.vn](mailto:anmph300894@tvu-onschool.edu.vn).
+- Số điện thoại: 0397241771.
+
 ## Công nghệ
 
 - ASP.NET Core MVC, Razor Views trên **.NET 10** (`net10.0`).
